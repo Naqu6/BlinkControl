@@ -24,6 +24,10 @@ void getFaceBounds(FaceDetector *detector, Mat image, Rect *bounds) {
 
 	faceFindingComplete = true;
 }
+
+void printTimeElapsed(std::chrono::time_point<std::chrono::system_clock> startTime, string id) {
+	cout << "Time point at: " << id << " Time:" << ((chrono::duration<double>) (chrono::system_clock::now() - startTime)).count() << "s\n\n";
+}
  
 int main(int argc,char** argv) {
 	// Load Face and Blink Detectors
@@ -43,7 +47,7 @@ int main(int argc,char** argv) {
 
 	result.success = false;
 
-	auto startTime = chrono::system_clock::now();
+	auto cameraStartTime = chrono::system_clock::now();
 
 	thread faceDetectionThread;
 
@@ -51,25 +55,23 @@ int main(int argc,char** argv) {
 	 
 	// Read a frame
 	while(cam.read(frame)) {		
-		auto endTime = chrono::system_clock::now();
+		printTimeElapsed(cameraStartTime, "Camera Processing Time: ");
 
-		chrono::duration<double> elapsed = endTime - startTime; 
-
-		cout << "\nCam Time: " << elapsed.count() << "s\n";
-
-		startTime = chrono::system_clock::now();
+		auto start = chrono::system_clock::now();
 
 		faceDetectionLock.lock();
 
 		Rect currentBounds = *faceBounds;
 
+
+
 		faceDetectionLock.unlock();
 
 		if (currentBounds.width != 0) {
+
 			result = blinkDetector.getBlinkResult(frame, currentBounds);
 
 			if (result.success) {
-				cout << "**Result Success**\n";
 				if (result.leftEyeRatio < .3 && result.rightEyeRatio < .3) {
 					cout << "**Blinking**\n";
 				}
@@ -89,20 +91,14 @@ int main(int argc,char** argv) {
 
 			faceDetectionThread = thread(getFaceBounds, &faceDetector, grayscale, faceBounds);
 		}
-
 		// Display results 
 		// imshow("Facial Landmark Detection", frame);
 		// Exit loop if ESC is pressed
+		printTimeElapsed(start, "Face Processing Time: ");
+		
 		if (waitKey(1) == 27) break;
-		 
-		endTime = chrono::system_clock::now();
 
-		elapsed = endTime - startTime; 
-
-		startTime = chrono::system_clock::now();
-
-		cout << "\nProcess Time: " << elapsed.count() << "s\n";
-
+		cameraStartTime = chrono::system_clock::now();
 	}
 
 	delete faceBounds;
