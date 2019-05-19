@@ -1,10 +1,12 @@
 #ifndef blinkDetector_H
 #define blinkDetector_H 
 
+#include <opencv2/opencv.hpp>
+#include <opencv2/face.hpp>
+
+using namespace std;
 using namespace cv;
 using namespace cv::face;
-
-#define EYE_DATA "haarcascade_eye.xml";
 
 const int LEFT_START_INDEX = 36;
 const int LEFT_END_INDEX = 41;
@@ -36,55 +38,72 @@ class EyeRatioDetector {
 	public:
 		EyeRatioDetector() {
 			// Create an instance of Facemark & Load landmark detector
+			
 			facemark = FacemarkLBF::create();
 			facemark->loadModel("lbfmodel.yaml");
 		}
 
-		BlinkResult getBlinkResult(Mat image, Rect bounds) {
-			image = resize(image, bounds);
-
-			imshow("Facial Landmark Detection", image);
-
-			vector< vector<Point2f> > landmarks;
-
-			vector<Rect> imageBounds(1, Rect(0, 0, image.rows, image.cols));
-
-			bool success = facemark->fit(image, imageBounds, landmarks);
-
-			BlinkResult result;
-
-			if (success && landmarks.size()) {
-				result = getBlinkStatus(landmarks[0]);
-				result.success = true;
-			} else {
-				result.success = false;
-			}
-
-			return result;
-
-		}
+		BlinkResult getBlinkResult(Mat image, Rect bounds);
 
 	private:
-		BlinkResult getBlinkStatus(vector<Point2f> landmarks) {
-			BlinkResult result;
-
-			result.leftEyeRatio = getRatio(landmarks, LEFT_START_INDEX);
-			result.rightEyeRatio = getRatio(landmarks, RIGHT_START_INDEX);
-
-			result.success = true;
-			
-			return result;
-		}
-
-		double getRatio(vector<Point2f> landmarks, const int start) {
-			int heightA = landmarks[start + EYE_Y_PAIR_A_INDEX_HIGH].y - landmarks[start + EYE_Y_PAIR_A_INDEX_LOW].y;
-			int heightB = landmarks[start + EYE_Y_PAIR_B_INDEX_HIGH].y - landmarks[start + EYE_Y_PAIR_B_INDEX_LOW].y;
-			int width = landmarks[start + EYE_X_INDEX_HIGH].x - landmarks[start + EYE_X_INDEX_LOW].x;
-
-			return (heightA + heightB)/((double)(2*width));
-		}
-
 		Ptr<Facemark> facemark;
-};
+
+		vector<Point2f> getFaceLandmarks(Mat croppedImage);
+		BlinkResult getBlinkStatus(vector<Point2f> landmarks);
+
+		double getRatio(vector<Point2f> landmarks, const int start);
+}; 
+
+BlinkResult EyeRatioDetector::getBlinkResult(Mat image, Rect bounds) {
+	Mat croppedImage = resize(image, bounds);
+
+	vector<Point2f> landmarks = getFaceLandmarks(croppedImage);
+
+	imshow("Facial Landmark Detection", croppedImage);
+
+	BlinkResult result;
+
+	if (landmarks.size()) {
+		result = getBlinkStatus(landmarks);
+		result.success = true;
+	} else {
+		result.success = false;
+	}
+
+	return result;
+}
+
+vector<Point2f> EyeRatioDetector::getFaceLandmarks(Mat croppedImage) {
+	vector< vector<Point2f> > landmarks;
+
+	vector<Rect> imageBounds(1, Rect(0, 0, croppedImage.rows, croppedImage.cols));
+
+	bool success = facemark->fit(croppedImage, imageBounds, landmarks);
+
+	if (success) {
+		return landmarks[0];
+	} else {
+		return vector<Point2f>();
+	}
+}
+
+BlinkResult EyeRatioDetector::getBlinkStatus(vector<Point2f> landmarks) {
+	BlinkResult result;
+
+	result.leftEyeRatio = getRatio(landmarks, LEFT_START_INDEX);
+	result.rightEyeRatio = getRatio(landmarks, RIGHT_START_INDEX);
+
+	result.success = true;
+	
+	return result;
+}
+
+double EyeRatioDetector::getRatio(vector<Point2f> landmarks, const int start) {
+	int heightA = landmarks[start + EYE_Y_PAIR_A_INDEX_HIGH].y - landmarks[start + EYE_Y_PAIR_A_INDEX_LOW].y;
+	int heightB = landmarks[start + EYE_Y_PAIR_B_INDEX_HIGH].y - landmarks[start + EYE_Y_PAIR_B_INDEX_LOW].y;
+	int width = landmarks[start + EYE_X_INDEX_HIGH].x - landmarks[start + EYE_X_INDEX_LOW].x;
+
+	return (heightA + heightB)/((double)(2*width));
+}
 
 #endif // blinkDetector_H
