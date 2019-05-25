@@ -1,14 +1,15 @@
+#ifndef _FACE_DETECTOR_MAIN_
+#define _FACE_DETECTOR_MAIN_
+
 #include <chrono>
 #include <thread>
 #include <opencv2/opencv.hpp>
-#include <opencv2/face.hpp>
 
 #include "faceDetector.cpp"
 #include "blinkDetector.cpp"
  
 using namespace std;
 using namespace cv;
-using namespace cv::face;
 
 mutex faceDetectionLock;
 atomic<bool> faceFindingComplete;
@@ -26,10 +27,10 @@ void getFaceBounds(FaceDetector *detector, Mat image, Rect *bounds) {
 }
 
 void printTimeElapsed(std::chrono::time_point<std::chrono::system_clock> startTime, string id) {
-	cout << "Time point at: " << id << " Time:" << ((chrono::duration<double>) (chrono::system_clock::now() - startTime)).count() << "s\n\n";
+	cout << "Time point at: " << id << " Time:" << ((chrono::duration<double>) (chrono::system_clock::now() - startTime)).count() << "s\n";
 }
  
-int main(int argc,char** argv) {
+void processLoop(void sendData(BlinkResult result), atomic<bool> *shouldStop) {
 	// Load Face and Blink Detectors
 	FaceDetector faceDetector;
 	EyeRatioDetector blinkDetector;
@@ -55,7 +56,7 @@ int main(int argc,char** argv) {
 	 
 	// Read a frame
 	while(cam.read(frame)) {		
-		printTimeElapsed(cameraStartTime, "Camera Processing Time: ");
+		// printTimeElapsed(cameraStartTime, "Camera Processing Time: ");
 
 		auto start = chrono::system_clock::now();
 
@@ -63,19 +64,17 @@ int main(int argc,char** argv) {
 
 		Rect currentBounds = *faceBounds;
 
-
-
 		faceDetectionLock.unlock();
 
 		if (currentBounds.width != 0) {
-
 			result = blinkDetector.getBlinkResult(frame, currentBounds);
 
 			if (result.success) {
-				if (result.leftEyeRatio < .3 && result.rightEyeRatio < .3) {
-					cout << "**Blinking**\n";
-				}
+				sendData(result);
+				// cout << "Left Ratio: " << result.leftEyeRatio << ", Right Ratio: " << result.rightEyeRatio << "\n";
 			}
+
+			rectangle(frame, currentBounds, Scalar(255, 200, 0));
 		}
 
 		if (faceFindingComplete) {
@@ -91,18 +90,18 @@ int main(int argc,char** argv) {
 
 			faceDetectionThread = thread(getFaceBounds, &faceDetector, grayscale, faceBounds);
 		}
-		// Display results 
-		// imshow("Facial Landmark Detection", frame);
-		// Exit loop if ESC is pressed
-		printTimeElapsed(start, "Face Processing Time: ");
+		// printTimeElapsed(start, "Face Processing Time: ");
 		
-		if (waitKey(1) == 27) break;
+		// Display results 
+		// Exit loop if ESC is pressed
 
 		cameraStartTime = chrono::system_clock::now();
+
+		cout << "\n";
 	}
 
 	delete faceBounds;
 	faceDetectionThread.join();
-
-	return 0;
 }
+
+#endif // _FACE_DETECTOR_MAIN_

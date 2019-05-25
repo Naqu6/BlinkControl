@@ -1,0 +1,1 @@
+g++ $(pkg-config --cflags --libs opencv) -std=c++11 facedetection.cpp -o facedetector

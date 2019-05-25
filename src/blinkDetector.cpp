@@ -40,7 +40,7 @@ class EyeRatioDetector {
 			// Create an instance of Facemark & Load landmark detector
 			
 			facemark = FacemarkLBF::create();
-			facemark->loadModel("lbfmodel.yaml");
+			facemark->loadModel("./data/lbfmodel.yaml");
 		}
 
 		BlinkResult getBlinkResult(Mat image, Rect bounds);
@@ -57,9 +57,9 @@ class EyeRatioDetector {
 BlinkResult EyeRatioDetector::getBlinkResult(Mat image, Rect bounds) {
 	Mat croppedImage = resize(image, bounds);
 
-	vector<Point2f> landmarks = getFaceLandmarks(croppedImage);
+	cout << "Width: " << croppedImage.cols << " Height: " << croppedImage.rows << "\n";
 
-	imshow("Facial Landmark Detection", croppedImage);
+	vector<Point2f> landmarks = getFaceLandmarks(croppedImage);
 
 	BlinkResult result;
 
