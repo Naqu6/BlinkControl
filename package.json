@@ -2,10 +2,11 @@
   "name": "blinkdetector",
   "version": "0.1.0",
   "description": "OpenCV/C++ blink detector",
-  "main": "module.js",
+  "main": "src/main.js",
   "scripts": {
-    "build": "node-gyp rebuild",
-    "clean": "node-gyp clean"
+    "build": "node-gyp rebuild; ./node_modules/.bin/electron-rebuild;",
+    "clean": "node-gyp clean",
+    "start": "electron ."
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,8 @@
     "node-addon-api": "^1.6.3"
   },
   "devDependencies": {
+    "electron": "^5.0.2",
+    "electron-rebuild": "^1.8.5",
     "node-gyp": "^4.0.0"
   }
 }

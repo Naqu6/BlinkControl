@@ -86,16 +86,14 @@ namespace blinkDetectorModule {
 	}
 
 	void stopProcessing(const FunctionCallbackInfo<Value>& args) {
-		// stopped = true;
-
-		// computerVisionThread.join();
+		stopped = true;
 	}
 
 	void Initialize(Local<Object> exports) {
 		stopped = true;
 
 		NODE_SET_METHOD(exports, "startProcessing", startProcessing);
-		// NODE_SET_METHOD(module, "stopProcessing", Method);
+		NODE_SET_METHOD(exports, "stopProcessing", stopProcessing);
 	}
 
 	NODE_MODULE(NODE_GYP_MODULE_NAME, Initialize);

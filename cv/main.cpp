@@ -55,8 +55,12 @@ void processLoop(void sendData(BlinkResult result), atomic<bool> *shouldStop) {
 	faceFindingComplete = true;
 	 
 	// Read a frame
-	while(cam.read(frame)) {		
-		// printTimeElapsed(cameraStartTime, "Camera Processing Time: ");
+	while(cam.read(frame)) {
+		if (*shouldStop) {
+			break;
+		}
+
+		printTimeElapsed(cameraStartTime, "Camera Processing Time: ");
 
 		auto start = chrono::system_clock::now();
 
@@ -71,7 +75,6 @@ void processLoop(void sendData(BlinkResult result), atomic<bool> *shouldStop) {
 
 			if (result.success) {
 				sendData(result);
-				// cout << "Left Ratio: " << result.leftEyeRatio << ", Right Ratio: " << result.rightEyeRatio << "\n";
 			}
 
 			rectangle(frame, currentBounds, Scalar(255, 200, 0));
@@ -90,14 +93,12 @@ void processLoop(void sendData(BlinkResult result), atomic<bool> *shouldStop) {
 
 			faceDetectionThread = thread(getFaceBounds, &faceDetector, grayscale, faceBounds);
 		}
-		// printTimeElapsed(start, "Face Processing Time: ");
+		printTimeElapsed(start, "Face Processing Time: ");
 		
 		// Display results 
 		// Exit loop if ESC is pressed
 
 		cameraStartTime = chrono::system_clock::now();
-
-		cout << "\n";
 	}
 
 	delete faceBounds;

@@ -57,8 +57,6 @@ class EyeRatioDetector {
 BlinkResult EyeRatioDetector::getBlinkResult(Mat image, Rect bounds) {
 	Mat croppedImage = resize(image, bounds);
 
-	cout << "Width: " << croppedImage.cols << " Height: " << croppedImage.rows << "\n";
-
 	vector<Point2f> landmarks = getFaceLandmarks(croppedImage);
 
 	BlinkResult result;

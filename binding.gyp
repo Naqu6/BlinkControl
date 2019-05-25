@@ -69,7 +69,7 @@
             ]
         },
         "sources": [
-            "./src/module.cpp"
+            "./cv/module.cpp"
         ]
     }]
 }
