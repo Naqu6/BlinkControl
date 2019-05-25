@@ -33,10 +33,10 @@ namespace blinkDetectorModule {
 
 		const unsigned numberOfArgs = 2;
 
-		// BlinkResult result = *((*BlinkResult) handle->data);
+		BlinkResult result = *((BlinkResult *) handle->data);
 		
 		Local<Value> argv[numberOfArgs] = {
-			NumberObject::New(isolate, 2.5), NumberObject::New(isolate, 0.5)
+			NumberObject::New(isolate, result.leftEyeRatio), NumberObject::New(isolate, result.rightEyeRatio)
 		};
 
 		Local<Function>::New(isolate, callback)->Call(isolate->GetCurrentContext(), Null(isolate), numberOfArgs, argv);
