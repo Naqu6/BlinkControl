@@ -11,7 +11,7 @@ function createWindow () {
 		}
 	});
 
-	win.loadFile('src/index.html');
+	win.loadFile('src/app.html');
 
 	win.webContents.openDevTools();
 

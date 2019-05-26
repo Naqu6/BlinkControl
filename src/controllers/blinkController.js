@@ -1,1 +1,0 @@
-var cv = require("../build/Release/module");

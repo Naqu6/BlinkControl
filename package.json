@@ -6,7 +6,7 @@
   "scripts": {
     "build": "node-gyp rebuild; ./node_modules/.bin/electron-rebuild;",
     "clean": "node-gyp clean",
-    "start": "electron ."
+    "start": "npx babel src/app --out-file app/app.js; electron .;"
   },
   "repository": {
     "type": "git",
@@ -23,8 +23,14 @@
     "node-addon-api": "^1.6.3"
   },
   "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/preset-react": "^7.0.0",
     "electron": "^5.0.2",
     "electron-rebuild": "^1.8.5",
-    "node-gyp": "^4.0.0"
+    "node-gyp": "^4.0.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
   }
 }
