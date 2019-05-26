@@ -1,6 +1,6 @@
 {
     "targets": [{
-        "target_name": "module",
+        "target_name": "blinkDetector",
         'include_dirs': [
             '.',
             '/user/local/lib',

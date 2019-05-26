@@ -1,10 +1,11 @@
-import cv from "../build/Release/module";
+import cv from "../build/Release/blinkDetector";
+import App from "../app/app";
 
 import React from "react";
 import ReactDOM from "react-dom";
 
 ReactDOM.render(
-  <h1>Hello, world!</h1>,
+  <App />,
   document.getElementById('root')
 );
 

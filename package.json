@@ -6,7 +6,7 @@
   "scripts": {
     "build": "node-gyp rebuild; ./node_modules/.bin/electron-rebuild;",
     "clean": "node-gyp clean",
-    "start": "npx babel src/app --out-file app/app.js; electron .;"
+    "start": "npx babel src/app --out-dir app/; electron .;"
   },
   "repository": {
     "type": "git",

@@ -60,9 +60,7 @@ void processLoop(void sendData(BlinkResult result), atomic<bool> *shouldStop) {
 			break;
 		}
 
-		printTimeElapsed(cameraStartTime, "Camera Processing Time: ");
-
-		auto start = chrono::system_clock::now();
+		// auto start = chrono::system_clock::now();
 
 		faceDetectionLock.lock();
 
@@ -93,7 +91,7 @@ void processLoop(void sendData(BlinkResult result), atomic<bool> *shouldStop) {
 
 			faceDetectionThread = thread(getFaceBounds, &faceDetector, grayscale, faceBounds);
 		}
-		printTimeElapsed(start, "Face Processing Time: ");
+		// printTimeElapsed(start, "Face Processing Time: ");
 		
 		// Display results 
 		// Exit loop if ESC is pressed
