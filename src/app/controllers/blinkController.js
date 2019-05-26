@@ -7,7 +7,10 @@ export default class BlinkController extends React.Component {
 
 		this.state = {
 			leftEyeRatio: null,
-			rightEyeRatio: null
+			rightEyeRatio: null,
+			startTime: Date.now(),
+			aselected: true,
+			running: true
 		}
 
 		this.start = this.start.bind(this);
@@ -16,6 +19,19 @@ export default class BlinkController extends React.Component {
 
 	start() {
 		cv.start((leftEyeRatio, rightEyeRatio) => {
+			let currentTime = Date.now();
+
+			if (this.state.running) {
+				if (leftEyeRatio < 0.3 && rightEyeRatio < 0.3) {
+					this.setState({running: false})
+				} else if (currentTime - this.state.startTime > 500) {
+					this.setState({
+						aselected: !this.state.aselected,
+						startTime: currentTime,
+					});
+				}
+			}
+
 			this.setState({
 				leftEyeRatio: parseFloat(leftEyeRatio),
 				rightEyeRatio: parseFloat(rightEyeRatio)
@@ -38,6 +54,10 @@ export default class BlinkController extends React.Component {
 					<button onClick={this.stop}>
 						Stop
 					</button>
+
+					<button onClick={this.resetGame}>
+
+					</button>
 				</div>
 
 				<div>
@@ -48,8 +68,12 @@ export default class BlinkController extends React.Component {
 					Right Eye: {this.state.rightEyeRatio}
 				</div>
 
-				<div>
+				<div class="a">
+					A {this.state.aselected ? "- Selected" : ""}
+				</div>
 
+				<div class="b">
+					B {this.state.aselected ? "" : "- Selected"}
 				</div>
 
 			</div>
