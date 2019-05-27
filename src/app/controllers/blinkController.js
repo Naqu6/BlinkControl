@@ -242,6 +242,7 @@ export default class BlinkController extends React.Component {
 
 		if (!this.state.ready) {
 			if (blinking) {
+				this.updateEyeData(leftEyeRatio, rightEyeRatio);
 				return;
 			}
 
@@ -249,8 +250,9 @@ export default class BlinkController extends React.Component {
 				ready: true,
 				updateTime: currentTime
 			});
-
 		}
+
+		this.updateEyeData(leftEyeRatio, rightEyeRatio);
 
 		if (blinking) {
 			if (!this.state.blinkStartTime) {
@@ -269,8 +271,6 @@ export default class BlinkController extends React.Component {
 				this.runAction(false, currentTime);
 			}
 		}
-
-		this.updateEyeData(leftEyeRatio, rightEyeRatio);
 	}
 
 	start() {

@@ -14,7 +14,7 @@ export default class TextEntryController extends React.Component {
 			<div className="flex">
 				<TextEntry ref={this.textEntry} />
 
-				<BlinkController decisionTime={750} blinkTime={350} values={
+				<BlinkController decisionTime={1000} blinkTime={350} values={
 					{
 						displayText: "root",
 						binaryChoice: false,
@@ -38,6 +38,8 @@ export default class TextEntryController extends React.Component {
 										callback: () => {
 											this.textEntry.current.addText("B")
 										}
+									}, {
+										displayText: "back"
 									}]
 								}, notBlinkingChoice: {
 									displayText: "C,D",
@@ -53,6 +55,8 @@ export default class TextEntryController extends React.Component {
 										callback: () => {
 											this.textEntry.current.addText("D")
 										}
+									}, {
+										displayText: "Back"
 									}]
 								}
 							}
