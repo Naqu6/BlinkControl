@@ -17,13 +17,13 @@ function BinaryOptions(props) {
 	return (
 		<div className="options binary-options"> 
 			<div>
-				Blink Options: {props.current.options.blinkingChoice.displayText}
+				Blink Option: {props.current.options.blinkingChoice.displayText}
 			</div>
 
 			<br/>
 
 			<div>
-				No-Blink Options: {props.current.options.notBlinkingChoice.displayText}
+				No-Blink Option: {props.current.options.notBlinkingChoice.displayText}
 			</div>
 		</div>
 	);
@@ -36,15 +36,13 @@ function MultipleOptions(props) {
 				props.current.options.map((option, index) => {
 					if (index == props.highlightedIndex) {
 						return (
-							<div>
-								<b>
-									{option.displayText}
-								</b>
+							<div className="option highlighted">
+								{option.displayText}
 							</div>
 						);
 					} else {
 						return (
-							<div>
+							<div className="option">
 								{option.displayText}
 							</div>
 						);
@@ -63,6 +61,38 @@ function Options(props) {
 	}
 }
 
+function getHeightFromRatio(width, ratio) {
+	return width * ratio;
+}
+
+class EyeStatus extends React.Component {
+	constructor(props) {
+		super(props);
+
+
+		this.canvas = React.createRef();
+		this.setRatio = this.setRatio.bind(this);
+	}
+
+	setRatio(ratio) {
+		const width = 50;
+		const height = getHeightFromRatio(width, ratio);
+
+		var canvas = this.canvas.current;
+		const context = canvas.getContext("2d");
+
+		context.clearRect(0, 0, 200, 200);
+		
+		context.fillStyle = "black";
+		context.beginPath()
+		context.ellipse(100, 100, width, height, 0, 0, 2 * Math.PI);
+		context.fill();
+	}
+
+	render() {
+		return <canvas ref={this.canvas} width={200} height={200}/>
+	}
+}
 
 export default class BlinkController extends React.Component {
 	// Abstraction for blink controller
@@ -103,9 +133,12 @@ export default class BlinkController extends React.Component {
 
 		this.processData = this.processData.bind(this);
 		this.getCurrent = this.getCurrent.bind(this);
-		this.updateBlinkData = this.updateBlinkData.bind(this);
+		this.updateEyeData = this.updateEyeData.bind(this);
 		this.currentIsBinary = this.currentIsBinary.bind(this);
 		this.getDecisionTime = this.getDecisionTime.bind(this);
+
+		this.leftEyeDisplay = React.createRef();
+		this.rightEyeDisplay = React.createRef();
 	}
 
 	getCurrent() {
@@ -138,11 +171,14 @@ export default class BlinkController extends React.Component {
 		return this.props.blinkTime;
 	}
 
-	updateBlinkData(leftEyeRatio, rightEyeRatio) {
+	updateEyeData(leftEyeRatio, rightEyeRatio) {
 		this.setState({
 			leftEyeRatio: parseFloat(leftEyeRatio),
 			rightEyeRatio: parseFloat(rightEyeRatio),
 		});
+
+		this.leftEyeDisplay.current.setRatio(this.state.leftEyeRatio);
+		this.rightEyeDisplay.current.setRatio(this.state.rightEyeRatio);
 	}
 
 	runAction(blinking, updateTime) {
@@ -191,8 +227,9 @@ export default class BlinkController extends React.Component {
 
 		this.setState({
 			path: path,
-			updateTime: updateTime + this.props.decisionTime,
+			updateTime: updateTime,
 			blinkStartTime: null,
+			ready: !blinking,
 			highlightedIndex: 0,
 		});
 
@@ -200,14 +237,20 @@ export default class BlinkController extends React.Component {
 
 	processData(leftEyeRatio, rightEyeRatio) {
 		let currentTime = Date.now();
-
-		var timeDelta = currentTime - this.state.updateTime;
-
-		if (timeDelta < 0) {
-			return;
-		}
 		
 		var blinking = this.getBlinkStatus(leftEyeRatio, rightEyeRatio);
+
+		if (!this.state.ready) {
+			if (blinking) {
+				return;
+			}
+
+			this.setState({
+				ready: true,
+				updateTime: currentTime
+			});
+
+		}
 
 		if (blinking) {
 			if (!this.state.blinkStartTime) {
@@ -222,12 +265,12 @@ export default class BlinkController extends React.Component {
 				blinkStartTime: null
 			});
 
-			if (timeDelta >= this.props.decisionTime) {
+			if (currentTime - this.state.updateTime >= this.props.decisionTime) {
 				this.runAction(false, currentTime);
 			}
 		}
 
-		this.updateBlinkData(leftEyeRatio, rightEyeRatio);
+		this.updateEyeData(leftEyeRatio, rightEyeRatio);
 	}
 
 	start() {
@@ -240,8 +283,8 @@ export default class BlinkController extends React.Component {
 
 	render() {
 		return (
-			<div>
-				<div>
+			<div className="blink-controller">
+				<div className="controls">
 					<button onClick={this.start}>
 						Start
 					</button>
@@ -251,12 +294,9 @@ export default class BlinkController extends React.Component {
 					</button>
 				</div>
 
-				<div>
-					Left Eye: {this.state.leftEyeRatio}
-
-					<br />
-
-					Right Eye: {this.state.rightEyeRatio}
+				<div className="flex eye-status">
+					<EyeStatus ratio={this.state.leftEyeRatio} name="Left Eye" ref={this.rightEyeDisplay}/>
+					<EyeStatus ratio={this.state.rightEyeRatio} name="Right Eye" ref={this.leftEyeDisplay}/>
 				</div>
 
 				<Options current={this.getCurrent()} highlightedIndex={this.state.highlightedIndex} />

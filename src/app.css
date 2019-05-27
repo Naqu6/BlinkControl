@@ -1,3 +1,7 @@
+* {
+	font-family: "Open Sans";
+}
+
 .flex {
 	display: flex;
 }

@@ -21,7 +21,6 @@ export default class SnakeController extends React.Component {
 
 	render() {
 		return <div className="flex">
-			<Snake ref={this.snakeGame}/>
 			<BlinkController decisionTime={750} blinkTime={350} values={
 				{
 					displayText: "root",
@@ -71,6 +70,6 @@ export default class SnakeController extends React.Component {
 					}]
 				}
 			}/>
-		</div>
+		</div>;
 	}
 }
