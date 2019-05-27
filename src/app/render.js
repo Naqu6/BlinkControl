@@ -8,10 +8,3 @@ ReactDOM.render(
   <App />,
   document.getElementById('root')
 );
-
-
-// cv.startProcessing((left, right) => {
-// 	console.log(left, right);
-
-// 	document.querySelector()
-// });

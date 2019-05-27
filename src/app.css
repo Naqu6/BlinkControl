@@ -5,3 +5,12 @@
 .flex {
 	display: flex;
 }
+
+.options > .option {
+	padding: 5px;
+	border: 1px solid black;
+}
+
+.option.highlighted {
+	background-color: lightblue;
+}
