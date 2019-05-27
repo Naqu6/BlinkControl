@@ -104,6 +104,8 @@ export default class BlinkController extends React.Component {
 		this.processData = this.processData.bind(this);
 		this.getCurrent = this.getCurrent.bind(this);
 		this.updateBlinkData = this.updateBlinkData.bind(this);
+		this.currentIsBinary = this.currentIsBinary.bind(this);
+		this.getDecisionTime = this.getDecisionTime.bind(this);
 	}
 
 	getCurrent() {
@@ -117,11 +119,23 @@ export default class BlinkController extends React.Component {
 	}
 
 	getBlinkStatus(leftEyeRatio, rightEyeRatio) {
-		if (leftEyeRatio < 0.3 && rightEyeRatio < 0.3) {
+		if ((leftEyeRatio < this.state.leftEyeRatio && rightEyeRatio < this.state.rightEyeRatio) || (leftEyeRatio < 0.3 && rightEyeRatio < 0.3)) {
 			return true;
 		} else {
 			return false;
 		}
+	}
+
+	currentIsBinary() {
+		return typeof this.state.path[this.state.path.length - 1] == "string";
+	}
+
+	getDecisionTime() {
+		if (this.currentIsBinary) {
+			return this.props.decisionTime;
+		}
+
+		return this.props.blinkTime;
 	}
 
 	updateBlinkData(leftEyeRatio, rightEyeRatio) {
@@ -156,14 +170,18 @@ export default class BlinkController extends React.Component {
 				return;
 			}
 
-			key  = this.state.highlightedIndex;
+			key = this.state.highlightedIndex;
 		}
 
-		var callback = options.options[key].callback;
+		if (options.options[key]) {
+			var callback = options.options[key].callback;
 		
-		if (callback) {
-			callback();
-		};
+			if (callback) {
+				callback();
+			};
+		} else {
+			debugger;
+		}
 
 		var path = [];
 
@@ -172,20 +190,16 @@ export default class BlinkController extends React.Component {
 		}
 
 		this.setState({
-			path: path
-		});
-
-		this.setState({
+			path: path,
 			updateTime: updateTime + this.props.decisionTime,
-			blinkStartTime: null
+			blinkStartTime: null,
+			highlightedIndex: 0,
 		});
 
 	}
 
 	processData(leftEyeRatio, rightEyeRatio) {
 		let currentTime = Date.now();
-
-		this.updateBlinkData(leftEyeRatio, rightEyeRatio)
 
 		var timeDelta = currentTime - this.state.updateTime;
 
@@ -200,7 +214,7 @@ export default class BlinkController extends React.Component {
 				this.setState({
 					blinkStartTime: currentTime
 				});
-			} else if (currentTime - this.state.blinkStartTime >= this.props.decisionTime) {
+			} else if (currentTime - this.state.blinkStartTime >= this.props.blinkTime) {
 				this.runAction(true, currentTime);
 			}
 		} else {
@@ -212,6 +226,8 @@ export default class BlinkController extends React.Component {
 				this.runAction(false, currentTime);
 			}
 		}
+
+		this.updateBlinkData(leftEyeRatio, rightEyeRatio);
 	}
 
 	start() {
