@@ -177,8 +177,8 @@ export default class BlinkController extends React.Component {
 			rightEyeRatio: parseFloat(rightEyeRatio),
 		});
 
-		this.leftEyeDisplay.current.setRatio(this.state.leftEyeRatio);
-		this.rightEyeDisplay.current.setRatio(this.state.rightEyeRatio);
+		// this.leftEyeDisplay.current.setRatio(this.state.leftEyeRatio);
+		// this.rightEyeDisplay.current.setRatio(this.state.rightEyeRatio);
 	}
 
 	runAction(blinking, updateTime) {
@@ -241,7 +241,7 @@ export default class BlinkController extends React.Component {
 		var blinking = this.getBlinkStatus(leftEyeRatio, rightEyeRatio);
 
 		if (!this.state.ready) {
-			if (blinking) {
+			if (blinking || (leftEyeRatio > this.state.leftEyeRatio && rightEyeRatio > this.state.rightEyeRatio)) {
 				this.updateEyeData(leftEyeRatio, rightEyeRatio);
 				return;
 			}
@@ -295,8 +295,9 @@ export default class BlinkController extends React.Component {
 				</div>
 
 				<div className="flex eye-status">
-					<EyeStatus ratio={this.state.leftEyeRatio} name="Left Eye" ref={this.rightEyeDisplay}/>
-					<EyeStatus ratio={this.state.rightEyeRatio} name="Right Eye" ref={this.leftEyeDisplay}/>
+					Left Eye: {this.state.leftEyeRatio}
+					<br />
+					Right Eye: {this.state.rightEyeRatio}
 				</div>
 
 				<Options current={this.getCurrent()} highlightedIndex={this.state.highlightedIndex} />
