@@ -69,6 +69,10 @@ Rect FaceDetector::getFaceBounds(Mat image) {
 		}
 	}
 
+	if (numberOfFaces > 1) {
+		cout << "More than one face!";
+	}
+
 	if (numberOfFaces > 0) {
 		return faces[0];
 	}

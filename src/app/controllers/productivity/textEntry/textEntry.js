@@ -17,12 +17,17 @@ export default class TextEntry extends React.Component {
 		});
 	}
 
+	backspace() {
+		this.setState({
+			text: this.state.text.substring(0, this.state.text.length)
+		})
+	} 
+
 	render() {
 		return (
-			<div>
+			<div className="text-entry-container">
 				<div>
 					Text Entered so far:
-
 				</div>
 
 				<div>

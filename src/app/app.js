@@ -1,5 +1,6 @@
 import React from "react";
 import TextEntryController from "../app/controllers/productivity/textEntry/textEntryController";
+import SnakeController from "../app/controllers/games/snake/snakeController";
 
 export default class App extends React.Component {
 	constructor(props) {
@@ -7,6 +8,7 @@ export default class App extends React.Component {
 	}
 
 	render() {
+		// return <SnakeController />
 		return <TextEntryController />;
 	}
 }

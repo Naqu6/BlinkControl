@@ -116,16 +116,33 @@ export default class BlinkController extends React.Component {
 
 		super(props);
 
+		this.selectionValues = this.props.values;
+
 		const startTime = Date.now();
 
+		this.eyeData = {
+			current: {
+				left: null,
+				right: null,
+			}, calibration :{
+				left: {
+					open: 0.35,
+					closed: 0.25,
+					mid: 0.3,
+				}, right: {
+					open: 0.35,
+					closed: 0.25,
+					mid: 0.3,
+				}
+			}
+		}
+
 		this.state = {
-			leftEyeRatio: null,
-			rightEyeRatio: null,
 			path: [],
 			highlightedIndex: 0,
 			blinkStartTime: startTime,
 			updateTime: startTime,
-			running: true,
+			ready: false,
 		}
 
 		this.start = this.start.bind(this);
@@ -142,21 +159,13 @@ export default class BlinkController extends React.Component {
 	}
 
 	getCurrent() {
-		var current = this.props.values; 
+		var current = this.selectionValues; 
 
 		this.state.path.forEach((key) => {
 			current = current.options[key];
 		});
 
 		return current;
-	}
-
-	getBlinkStatus(leftEyeRatio, rightEyeRatio) {
-		if ((leftEyeRatio < this.state.leftEyeRatio && rightEyeRatio < this.state.rightEyeRatio) || (leftEyeRatio < 0.3 && rightEyeRatio < 0.3)) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 	currentIsBinary() {
@@ -171,14 +180,26 @@ export default class BlinkController extends React.Component {
 		return this.props.blinkTime;
 	}
 
-	updateEyeData(leftEyeRatio, rightEyeRatio) {
-		this.setState({
-			leftEyeRatio: parseFloat(leftEyeRatio),
-			rightEyeRatio: parseFloat(rightEyeRatio),
-		});
+	isBlinking(currentRatio) {
+		return currentRatio <= 0.30;
+	}
 
-		// this.leftEyeDisplay.current.setRatio(this.state.leftEyeRatio);
-		// this.rightEyeDisplay.current.setRatio(this.state.rightEyeRatio);
+	updateEyeData(leftEyeRatio, rightEyeRatio) {
+		var blinking = this.isBlinking(leftEyeRatio) && this.isBlinking(rightEyeRatio);
+
+		this.eyeData.current = {
+			left: leftEyeRatio,
+			right: rightEyeRatio
+		}
+
+		return blinking;
+		// this.setState({
+		// 	leftEyeRatio: parseFloat(leftEyeRatio),
+		// 	rightEyeRatio: parseFloat(rightEyeRatio),
+		// });
+
+		// this.leftEyeDisplay.current.setRatio(this.eyeData.leftEyeRatio);
+		// this.rightEyeDisplay.current.setRatio(this.eyeData.rightEyeRatio);
 	}
 
 	runAction(blinking, updateTime) {
@@ -238,11 +259,10 @@ export default class BlinkController extends React.Component {
 	processData(leftEyeRatio, rightEyeRatio) {
 		let currentTime = Date.now();
 		
-		var blinking = this.getBlinkStatus(leftEyeRatio, rightEyeRatio);
+		var blinking = this.updateEyeData(leftEyeRatio, rightEyeRatio);
 
 		if (!this.state.ready) {
-			if (blinking || (leftEyeRatio > this.state.leftEyeRatio && rightEyeRatio > this.state.rightEyeRatio)) {
-				this.updateEyeData(leftEyeRatio, rightEyeRatio);
+			if (blinking) {
 				return;
 			}
 
@@ -251,8 +271,6 @@ export default class BlinkController extends React.Component {
 				updateTime: currentTime
 			});
 		}
-
-		this.updateEyeData(leftEyeRatio, rightEyeRatio);
 
 		if (blinking) {
 			if (!this.state.blinkStartTime) {
@@ -273,11 +291,28 @@ export default class BlinkController extends React.Component {
 		}
 	}
 
+	updateValues(values) {
+		const currentTime = Date.now();
+		
+		this.selectionValues = values;
+
+		this.setState({
+			path: [],
+			highlightedIndex: 0,
+			blinkStartTime: currentTime,
+			updateTime: currentTime,
+			ready: false,
+		})
+	}
+
 	start() {
-		cv.start(this.processData);
+		cv.start((a, b) => {
+			this.processData(parseFloat(a), parseFloat(b));
+		});
 	}
 
 	stop() {
+		debugger;
 		cv.stop();
 	}
 
@@ -292,12 +327,17 @@ export default class BlinkController extends React.Component {
 					<button onClick={this.stop}>
 						Stop
 					</button>
+
+					<button onClick={this.calibrateOpenEye}>
+						Calibrate Open Eye
+					</button>
+
+					<button onClick={this.calibrateClosedEye}>
+						Calibrate Closed Eye
+					</button>
 				</div>
 
 				<div className="flex eye-status">
-					Left Eye: {this.state.leftEyeRatio}
-					<br />
-					Right Eye: {this.state.rightEyeRatio}
 				</div>
 
 				<Options current={this.getCurrent()} highlightedIndex={this.state.highlightedIndex} />

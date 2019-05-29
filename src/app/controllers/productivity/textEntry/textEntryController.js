@@ -4,7 +4,7 @@ import BlinkController from "../../blinkController";
 
 var possibleLetters = Array(26).fill(1).map((_, i) => String.fromCharCode(65 + i));
 
-function gridTextDisplay(letters, callbackMethod) {
+function gridLetterDisplay(letters, callbackMethod) {
 	var numberOfRows = Math.ceil(Math.sqrt(letters.length));
 
 	var results = [];
@@ -46,6 +46,7 @@ function gridTextDisplay(letters, callbackMethod) {
 	return results;
 }
 
+// Binary search implementation
 function textOptions(letters, callbackMethod) {
 	var halfIndex = Math.ceil(letters.length/2);
 
@@ -100,14 +101,61 @@ function textOptions(letters, callbackMethod) {
 }
 
 function generateTextValues(callback) {
-	var options = gridTextDisplay(possibleLetters, callback)
+	var letterOptions = gridLetterDisplay(possibleLetters, callback)
 	// var binaryChoice = options.constructor != Array;
 
 	return {
 		displayText: "Letters",
 		binaryChoice: false,
 		final: false,
-		options: options
+		options: letterOptions
+	}
+}
+
+function getPuncuationValues(callback, deleteCallback) {
+	return {
+		displayText: "Puncuation",
+		binaryChoice: false,
+		final: false,
+		options: [{
+			displayText: "Space, Backspace, Linebreak",
+			binaryChoice: false,
+			final: true,
+			options: [{
+				displayText: "Space",
+				callback: () => {
+					callback(" ");
+				}
+			}, {
+				displayText: "Backspace",
+				callback: deleteCallback,
+			}, {
+				displayText: "Linebreak",
+				callback: () => {
+					callback("\n");
+				}
+			}]
+		}, {
+			displayText: "Puncuation",
+			binaryChoice: false,
+			final: true,
+			options: [{
+				displayText: "Period",
+				callback: () => {
+					callback(". ");
+				}
+			}, {
+				displayText: "Comma",
+				callback: () => {
+					callback(", ");
+				}
+			}, {
+				displayText: "Question Mark",
+				callback: () => {
+					callback("? ");
+				}
+			}]
+		}]
 	}
 }
 
@@ -117,6 +165,7 @@ export default class TextEntryController extends React.Component {
 		super(props);
 
 		this.addText = this.addText.bind(this);
+		this.deleteText = this.deleteText.bind(this);
 		
 		this.textEntry = React.createRef();
 	}
@@ -125,18 +174,23 @@ export default class TextEntryController extends React.Component {
 		this.textEntry.current.addText(text)
 	}
 
+	deleteText() {
+		this.textEntry.current.backspace();
+	}
+
 	render() {
 		return (
 			<div className="flex">
 				<TextEntry ref={this.textEntry} />
 
-				<BlinkController decisionTime={450} blinkTime={350} values={
+				<BlinkController decisionTime={700} blinkTime={350} values={
 					{
 						displayText: "root",
 						binaryChoice: false,
 						final: false,
 						options: [
 							generateTextValues(this.addText),
+							getPuncuationValues(this.addText, this.deleteText),
 						]
 					}
 				}/>

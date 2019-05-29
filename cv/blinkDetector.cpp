@@ -97,9 +97,9 @@ BlinkResult EyeRatioDetector::getBlinkStatus(vector<Point2f> landmarks) {
 }
 
 double EyeRatioDetector::getRatio(vector<Point2f> landmarks, const int start) {
-	int heightA = landmarks[start + EYE_Y_PAIR_A_INDEX_HIGH].y - landmarks[start + EYE_Y_PAIR_A_INDEX_LOW].y;
-	int heightB = landmarks[start + EYE_Y_PAIR_B_INDEX_HIGH].y - landmarks[start + EYE_Y_PAIR_B_INDEX_LOW].y;
-	int width = landmarks[start + EYE_X_INDEX_HIGH].x - landmarks[start + EYE_X_INDEX_LOW].x;
+	int heightA = norm(landmarks[start + EYE_Y_PAIR_A_INDEX_HIGH] - landmarks[start + EYE_Y_PAIR_A_INDEX_LOW]);
+	int heightB = norm(landmarks[start + EYE_Y_PAIR_B_INDEX_HIGH] - landmarks[start + EYE_Y_PAIR_B_INDEX_LOW]);
+	int width = norm(landmarks[start + EYE_X_INDEX_HIGH] - landmarks[start + EYE_X_INDEX_LOW]);
 
 	return (heightA + heightB)/((double)(2*width));
 }

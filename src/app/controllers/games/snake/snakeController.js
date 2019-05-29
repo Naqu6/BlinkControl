@@ -6,7 +6,58 @@ export default class SnakeController extends React.Component {
 	constructor(props) {
 		super(props);
 
+		this.lateralMoves = {
+			displayText: "root",
+			binaryChoice: false,
+			final: false,
+			options: [{
+				binaryChoice: false,
+				final: true,
+				displayText: "Make Move",
+				options: [{
+					displayText: "Left",
+					callback: () => {
+						this.moveLeft();
+					}
+				}, {
+					displayText: "Right",
+					callback: () => {
+						this.moveRight()
+					}
+				}]
+			}]
+		};
+
+		this.verticalMoves = {
+			displayText: "root",
+			binaryChoice: false,
+			final: false,
+			options: [{
+				binaryChoice: false,
+				final: true,
+				displayText: "Make Move",
+				options: [{
+					displayText: "Up",
+					callback: () => {
+						this.moveUp();
+					}
+				}, {
+					displayText: "Down",
+					callback: () => {
+						this.moveDown();
+					}
+				}]
+			}]
+		};
+
 		this.snakeGame = React.createRef();
+		this.blinkController = React.createRef();
+
+		var toBind = ["moveUp", "moveDown", "moveLeft", "moveRight"];
+
+		toBind.forEach((funcName) => {
+			this[funcName] = this[funcName].bind(this);
+		});
 	}
 
 	componentDidMount() {
@@ -19,58 +70,30 @@ export default class SnakeController extends React.Component {
     	};
 	}
 
+	moveUp() {
+		this.snakeGame.current.setDirection(-2);
+		this.blinkController.current.updateValues(this.lateralMoves);
+	}
+
+	moveDown() {
+		this.snakeGame.current.setDirection(2);
+		this.blinkController.current.updateValues(this.lateralMoves);
+	}
+
+	moveLeft() {
+		this.snakeGame.current.setDirection(-1);
+		this.blinkController.current.updateValues(this.verticalMoves);
+	}
+
+	moveRight() {
+		this.snakeGame.current.setDirection(1);
+		this.blinkController.current.updateValues(this.verticalMoves);
+	}
+
 	render() {
 		return <div className="flex">
-			<Snake ref={this.snakeGame.current} />
-			<BlinkController decisionTime={750} blinkTime={350} values={
-				{
-					displayText: "root",
-					binaryChoice: false,
-					final: false,
-					options: [{
-						binaryChoice: true,
-						final: false,
-						displayText: "Make Move",
-						options: {
-							blinkingChoice: {
-								displayText: "Left - Right",
-								binaryChoice: false,
-								final: true,
-								options: [{
-									displayText: "Left",
-									callback: () => {
-										console.log("Left");
-										this.snakeGame.current.setDirection(-1);
-									}
-								}, {
-									displayText: "Right",
-									callback: () => {
-										console.log("Right");
-										this.snakeGame.current.setDirection(1);
-									}
-								}]
-							}, notBlinkingChoice: {
-								displayText: "Up - Down",
-								binaryChoice: false,
-								final: true,
-								options: [{
-									displayText: "Up",
-									callback: () => {
-										console.log("Up");
-										this.snakeGame.current.setDirection(-2);
-									}
-								}, {
-									displayText: "Down",
-									callback: () => {
-										console.log("Down");
-										this.snakeGame.current.setDirection(2);
-									}
-								}]
-							}
-						}
-					}]
-				}
-			}/>
+			<Snake ref={this.snakeGame} />
+			<BlinkController decisionTime={450} blinkTime={350} values={this.verticalMoves} ref={this.blinkController}/>
 		</div>;
 	}
 }
