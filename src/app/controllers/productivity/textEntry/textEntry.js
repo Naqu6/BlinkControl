@@ -9,19 +9,28 @@ export default class TextEntry extends React.Component {
 		}
 
 		this.addText = this.addText.bind(this);
+		this.currentWord = "";
 	}
 
 	addText(text) {
 		this.setState({
 			text: this.state.text + text
 		});
+
+		if (text.match(/[a-z]/i)) {
+			this.currentWord += text;
+		} else {
+			this.currentWord = "";
+		}
+
+		return this.currentWord;
 	}
 
 	backspace() {
 		this.setState({
 			text: this.state.text.substring(0, this.state.text.length)
 		})
-	} 
+	}
 
 	render() {
 		return (

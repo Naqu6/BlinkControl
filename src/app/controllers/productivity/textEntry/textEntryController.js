@@ -1,6 +1,7 @@
 import React from "react";
 import TextEntry from "./textEntry";
 import BlinkController from "../../blinkController";
+import predictor from "../../../../build/Release/letterPredictor";
 
 var possibleLetters = Array(26).fill(1).map((_, i) => String.fromCharCode(65 + i));
 
@@ -134,6 +135,8 @@ function getPuncuationValues(callback, deleteCallback) {
 				callback: () => {
 					callback("\n");
 				}
+			}, {
+				displayText: "Back",
 			}]
 		}, {
 			displayText: "Puncuation",
@@ -154,10 +157,13 @@ function getPuncuationValues(callback, deleteCallback) {
 				callback: () => {
 					callback("? ");
 				}
+			}, {
+				displayText: "Back"
 			}]
 		}]
 	}
 }
+
 
 
 export default class TextEntryController extends React.Component {
@@ -168,10 +174,55 @@ export default class TextEntryController extends React.Component {
 		this.deleteText = this.deleteText.bind(this);
 		
 		this.textEntry = React.createRef();
+		this.blinkController = React.createRef();
+		this.resetTextEntryValues = this.resetTextEntryValues.bind(this);
+	}
+
+	resetTextEntryValues() {
+		this.blinkController.current.updateValues({
+			displayText: "root",
+			binaryChoice: false,
+			final: false,
+			options: [
+				generateTextValues(this.addText),
+				getPuncuationValues(this.addText, this.deleteText),
+			]
+		});
 	}
 
 	addText(text) {
-		this.textEntry.current.addText(text)
+		var currentWord = this.textEntry.current.addText(text);
+
+		if (currentWord) {
+			var possibleLetters = predictor.nextLetters(currentWord);
+
+			var newOptions = gridLetterDisplay(possibleLetters, this.addText);
+
+			this.blinkController.current.updateValues({
+				displayText: "root",
+				binaryChoice: false,
+				final: false,
+				options: [
+					{
+						displayText: "Letters",
+						binaryChoice: false,
+						final: false,
+						options: newOptions
+					}, 
+					getPuncuationValues(this.addText, this.deleteText),
+					{
+						displayText: "Back",
+						binaryChoice: false,
+						final: true,
+						options: [],
+						callback: this.resetTextEntryValues
+					}
+
+				]
+			});
+		} else {
+			this.resetTextEntryValues()
+		}
 	}
 
 	deleteText() {
@@ -179,21 +230,20 @@ export default class TextEntryController extends React.Component {
 	}
 
 	render() {
+		debugger;
 		return (
 			<div className="flex">
 				<TextEntry ref={this.textEntry} />
 
-				<BlinkController decisionTime={700} blinkTime={350} values={
-					{
-						displayText: "root",
-						binaryChoice: false,
-						final: false,
-						options: [
-							generateTextValues(this.addText),
-							getPuncuationValues(this.addText, this.deleteText),
-						]
-					}
-				}/>
+				<BlinkController decisionTime={700} blinkTime={350} values={{
+					displayText: "root",
+					binaryChoice: false,
+					final: false,
+					options: [
+						generateTextValues(this.addText),
+						getPuncuationValues(this.addText, this.deleteText),
+					]
+				}} ref={this.blinkController}/>
 			</div>
 		);
 	}
