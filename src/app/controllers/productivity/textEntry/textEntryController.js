@@ -21,7 +21,7 @@ function gridLetterDisplay(letters, callbackMethod) {
 
 		while (counter < letters.length && counter < stop) {
 			const letter = letters[counter]
-			displayText += letter;
+
 			options.push({
 				displayText: letter,
 				callback: () => {
@@ -61,12 +61,14 @@ function textOptions(letters, callbackMethod) {
 		var final = !(Math.ceil(halfIndex/2) > 2);
 
 		return [{
-			displayText: `${start[0]} through ${start[start.length - 1]}`,
+			// displayText: `${start[0]} through ${start[start.length - 1]}`,
+			displayText: "",
 			options: blinkingOptions,
 			binaryChoice: false,
 			final: final,
 		}, {
-			displayText: `${end[0]} through ${end[end.length - 1]}`,
+			// displayText: `${end[0]} through ${end[end.length - 1]}`,
+			displayText: "",
 			options: notBlinkingOptions,
 			binaryChoice: false,
 			final: final,
