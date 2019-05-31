@@ -104,7 +104,8 @@ function textOptions(letters, callbackMethod) {
 }
 
 function generateTextValues(callback) {
-	var letterOptions = gridLetterDisplay(possibleLetters, callback)
+	var letterOptions = textOptions(possibleLetters, callback);
+	// var letterOptions = gridLetterDisplay(possibleLetters, callback)
 	// var binaryChoice = options.constructor != Array;
 
 	return {
@@ -198,7 +199,7 @@ export default class TextEntryController extends React.Component {
 		if (currentWord) {
 			var possibleLetters = predictor.nextLetters(currentWord.toLowerCase()).sort();
 
-			var newOptions = gridLetterDisplay(possibleLetters, this.addText);
+			var newOptions = textOptions(possibleLetters, this.addText);
 
 			this.blinkController.current.updateValues({
 				displayText: "root",
