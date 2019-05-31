@@ -29,24 +29,28 @@ function BinaryOptions(props) {
 	);
 }
 
+function getKey(path) {
+	return btoa(JSON.stringify(path));
+}
+
 function MultipleOptions(props) {
+	if (!props.options) return <div/>;
+
 	return (
-		<div className="options multiple-options">
+		<div className={`options ${props.final ? "flex" : "" } multiple-options`}>
 			{
-				props.current.options.map((option, index) => {
-					if (index == props.highlightedIndex) {
-						return (
-							<div className="option highlighted">
+				props.options.map((option, index) => {
+					var highlighted = (props.highlightedIndex == index && props.path.length == 0) ? "highlighted" : "";
+
+					return (
+						<div className={`option ${highlighted}`} key={getKey([...props.path, index])}>
+							<div className="option-title">
 								{option.displayText}
 							</div>
-						);
-					} else {
-						return (
-							<div className="option">
-								{option.displayText}
-							</div>
-						);
-					}
+
+							<Options options={option.options} path={props.path.slice(1)} final={option.final} highlightedIndex={index == props.path[0] ? props.highlightedIndex : -1}/>
+						</div>
+					);
 				})
 			}
 		</div>
@@ -54,11 +58,12 @@ function MultipleOptions(props) {
 }
 
 function Options(props) {
-	if (props.current.binaryChoice) {
-		return BinaryOptions(props);
-	} else {
-		return MultipleOptions(props);
-	}
+	return MultipleOptions(props);
+	// if (props.current.binaryChoice) {
+	// 	return BinaryOptions(props);
+	// } else {
+	// 	return MultipleOptions(props);
+	// }
 }
 
 function getHeightFromRatio(width, ratio) {
@@ -340,7 +345,7 @@ export default class BlinkController extends React.Component {
 				<div className="flex eye-status">
 				</div>
 
-				<Options current={this.getCurrent()} highlightedIndex={this.state.highlightedIndex} />
+				<Options options={this.selectionValues.options} final={this.selectionValues.final} path={this.state.path} highlightedIndex={this.state.highlightedIndex}/>
 			</div>
 		);
 	}

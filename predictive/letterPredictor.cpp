@@ -91,7 +91,6 @@ namespace letterPredictorModule {
 
 		for (int i = 0; ((unsigned long) i) < words.size(); i++) {
 			if (words[i].length() > ((unsigned long) length) && word == words[i].substr(0, length)) {
-				cout << words[i] << "\n";
 				scores[words[i][length] - letter_start].score += 1;
 			}
 		}

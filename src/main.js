@@ -1,8 +1,14 @@
 const { app, BrowserWindow } = require('electron');
+const path = require('path')
+const os = require("os");
 
 let win;
 
 function createWindow () {
+	BrowserWindow.addDevToolsExtension(
+		path.join(os.homedir(), '/Library/Application\ Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/3.6.0_0')
+	);
+	
 	win = new BrowserWindow({
 		width: 1400,
 		height: 1000,
