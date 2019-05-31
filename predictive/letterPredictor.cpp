@@ -1,5 +1,7 @@
+#include <iostream>
 #include <node.h>
-#include <algorithm>
+#include <fstream>
+// #include <algorithm>
 #include <string>
 #include <vector>
 
@@ -23,8 +25,22 @@ namespace letterPredictorModule {
 
 	vector<string> words;
 
-	string getWordList() {
-		return "hello\nhi\nhey\nhaha\nhigh\nbi\ngeee";
+	vector<string> getWordList() {
+		vector<string> results;
+
+		string line;
+		ifstream myfile ("./data/words.txt");
+		
+		if (myfile.is_open()) {
+			
+			while (getline (myfile,line)) {
+				results.push_back(line);
+			}
+
+			myfile.close();
+		}
+
+		return results;
 	}
 
 	vector<string> splitText(string text) {
@@ -46,9 +62,7 @@ namespace letterPredictorModule {
 	}
 
 	vector<string> getWords() {
-		string initial = getWordList();
-		
-		return splitText(initial);
+		return getWordList();
 	}
 
 	struct letterScore {
@@ -76,23 +90,22 @@ namespace letterPredictorModule {
 		int length = word.length();
 
 		for (int i = 0; ((unsigned long) i) < words.size(); i++) {
-			if (words[i].length() > ((unsigned long) length) && word.compare(0, length, words[i])) {
+			if (words[i].length() > ((unsigned long) length) && word == words[i].substr(0, length)) {
+				cout << words[i] << "\n";
 				scores[words[i][length] - letter_start].score += 1;
 			}
 		}
 
-		sort(scores.begin(), scores.end(), compare); 
+		// sort(scores.begin(), scores.end(), compare); 
 
 		vector<char> results;
 
 		for (int i = 0; i < number_of_letters; i++) {
 			letterScore current = scores[i];
 			
-			if (current.score == 0) {
-				break;
+			if (current.score != 0) {
+				results.push_back(current.letter);
 			}
-
-			results.push_back(current.letter);
 		}
 
 		return results;

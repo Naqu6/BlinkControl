@@ -194,7 +194,7 @@ export default class TextEntryController extends React.Component {
 		var currentWord = this.textEntry.current.addText(text);
 
 		if (currentWord) {
-			var possibleLetters = predictor.nextLetters(currentWord);
+			var possibleLetters = predictor.nextLetters(currentWord.toLowerCase()).sort();
 
 			var newOptions = gridLetterDisplay(possibleLetters, this.addText);
 

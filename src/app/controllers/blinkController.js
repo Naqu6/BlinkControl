@@ -242,7 +242,7 @@ export default class BlinkController extends React.Component {
 
 		var path = [];
 
-		if (!options.final) {
+		if (options.options[key].options && !options.final) {
 			path = [...this.state.path, key];
 		}
 
