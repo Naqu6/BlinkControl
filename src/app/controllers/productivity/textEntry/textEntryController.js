@@ -95,10 +95,6 @@ function textOptions(letters, callbackMethod) {
 			};
 		});
 
-		options.push({
-			displayText: "Back",
-		});
-
 		return options;
 	}
 }
@@ -179,6 +175,7 @@ export default class TextEntryController extends React.Component {
 		this.textEntry = React.createRef();
 		this.blinkController = React.createRef();
 		this.resetTextEntryValues = this.resetTextEntryValues.bind(this);
+		this.letterSuggestions = this.letterSuggestions.bind(this);
 	}
 
 	resetTextEntryValues() {
@@ -193,9 +190,7 @@ export default class TextEntryController extends React.Component {
 		});
 	}
 
-	addText(text) {
-		var currentWord = this.textEntry.current.addText(text);
-
+	letterSuggestions(currentWord) {
 		if (currentWord) {
 			var possibleLetters = predictor.nextLetters(currentWord.toLowerCase()).sort();
 
@@ -228,8 +223,12 @@ export default class TextEntryController extends React.Component {
 		}
 	}
 
+	addText(text) {
+		this.letterSuggestions(this.textEntry.current.addText(text));
+	}
+
 	deleteText() {
-		this.textEntry.current.backspace();
+		this.letterSuggestions(this.textEntry.current.backspace());
 	}
 
 	render() {

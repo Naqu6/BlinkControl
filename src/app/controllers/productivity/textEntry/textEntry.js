@@ -28,8 +28,12 @@ export default class TextEntry extends React.Component {
 
 	backspace() {
 		this.setState({
-			text: this.state.text.substring(0, this.state.text.length)
-		})
+			text: this.state.text.substring(0, this.state.text.length - 1)
+		});
+
+		this.currentWord.substring(this.currentWord.length - 1);
+
+		return this.currentWord;
 	}
 
 	render() {

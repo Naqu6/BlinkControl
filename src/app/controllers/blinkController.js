@@ -41,6 +41,7 @@ function MultipleOptions(props) {
 			{
 				props.options.map((option, index) => {
 					var highlighted = (props.highlightedIndex == index && props.path.length == 0) ? "highlighted" : "";
+					var options = option.options;
 
 					return (
 						<div className={`option ${highlighted}`} key={getKey([...props.path, index])}>
@@ -125,11 +126,13 @@ export default class BlinkController extends React.Component {
 
 		const startTime = Date.now();
 
+		this.running = false;
+
 		this.eyeData = {
 			current: {
 				left: null,
 				right: null,
-			}, calibration :{
+			}, calibration: {
 				left: {
 					open: 0.35,
 					closed: 0.25,
@@ -148,9 +151,11 @@ export default class BlinkController extends React.Component {
 			blinkStartTime: startTime,
 			updateTime: startTime,
 			ready: false,
+			sensitivity: 0.5
 		}
 
 		this.start = this.start.bind(this);
+		this.startCV = this.startCV.bind(this);
 		this.stop = this.stop.bind(this);
 
 		this.processData = this.processData.bind(this);
@@ -159,8 +164,31 @@ export default class BlinkController extends React.Component {
 		this.currentIsBinary = this.currentIsBinary.bind(this);
 		this.getDecisionTime = this.getDecisionTime.bind(this);
 
+		this.calibrate = this.calibrate.bind(this);
+		this.calibrateOpenEye = this.calibrateOpenEye.bind(this);
+		this.calibrateClosedEye = this.calibrateClosedEye.bind(this);
+
 		this.leftEyeDisplay = React.createRef();
 		this.rightEyeDisplay = React.createRef();
+	}
+
+	calibrate() {
+		this.eyeData.calibration.left.mid = this.state.sensitivity * this.eyeData.calibration.left.open + (1 - this.state.sensitivity) * this.eyeData.calibration.left.closed;
+		this.eyeData.calibration.right.mid = this.state.sensitivity * this.eyeData.calibration.right.open + (1 - this.state.sensitivity) * this.eyeData.calibration.right.closed;
+	}
+
+	calibrateOpenEye() {
+		this.eyeData.calibration.left.open = this.eyeData.current.left;
+		this.eyeData.calibration.right.open = this.eyeData.current.right;
+
+		this.calibrate();
+	}
+
+	calibrateClosedEye() {
+		this.eyeData.calibration.left.closed = this.eyeData.current.left;
+		this.eyeData.calibration.right.closed = this.eyeData.current.right;
+		
+		this.calibrate();
 	}
 
 	getCurrent() {
@@ -190,7 +218,7 @@ export default class BlinkController extends React.Component {
 	}
 
 	updateEyeData(leftEyeRatio, rightEyeRatio) {
-		var blinking = this.isBlinking(leftEyeRatio) && this.isBlinking(rightEyeRatio);
+		var blinking = this.isBlinking(leftEyeRatio, this.eyeData.calibration.left.mid) && this.isBlinking(rightEyeRatio, this.eyeData.calibration.right.mid);
 
 		this.eyeData.current = {
 			left: leftEyeRatio,
@@ -240,15 +268,23 @@ export default class BlinkController extends React.Component {
 		
 			if (callback) {
 				callback();
-			};
+			}
 		} else {
 			debugger;
 		}
 
+		if (this.state.path.length) {
+			options.options.pop();			
+		}
+
 		var path = [];
 
-		if (options.options[key].options && !options.final) {
+		if (options.options[key] && options.options[key].options && !options.final) {
 			path = [...this.state.path, key];
+
+			options.options[key].options.push({
+				"displayText": "Back",
+			});
 		}
 
 		this.setState({
@@ -258,10 +294,13 @@ export default class BlinkController extends React.Component {
 			ready: !blinking,
 			highlightedIndex: 0,
 		});
-
 	}
 
 	processData(leftEyeRatio, rightEyeRatio) {
+		if (!this.running) {
+			return;
+		}
+
 		let currentTime = Date.now();
 		
 		var blinking = this.updateEyeData(leftEyeRatio, rightEyeRatio);
@@ -310,10 +349,14 @@ export default class BlinkController extends React.Component {
 		})
 	}
 
-	start() {
+	startCV() {
 		cv.start((a, b) => {
 			this.processData(parseFloat(a), parseFloat(b));
 		});
+	}
+
+	start() {
+		this.running = true;
 	}
 
 	stop() {
@@ -325,6 +368,10 @@ export default class BlinkController extends React.Component {
 		return (
 			<div className="blink-controller">
 				<div className="controls">
+					<button onClick={this.startCV}>
+						Enable CV
+					</button>
+
 					<button onClick={this.start}>
 						Start
 					</button>
