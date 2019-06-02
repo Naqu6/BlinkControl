@@ -151,7 +151,7 @@ export default class BlinkController extends React.Component {
 			blinkStartTime: startTime,
 			updateTime: startTime,
 			ready: false,
-			sensitivity: 0.5
+			sensitivity: 0.65
 		}
 
 		this.start = this.start.bind(this);
@@ -265,10 +265,6 @@ export default class BlinkController extends React.Component {
 
 		if (options.options[key]) {
 			var callback = options.options[key].callback;
-		
-			if (callback) {
-				callback();
-			}
 		} else {
 			debugger;
 		}
@@ -294,6 +290,10 @@ export default class BlinkController extends React.Component {
 			ready: !blinking,
 			highlightedIndex: 0,
 		});
+
+		if (callback) {
+			callback();
+		}
 	}
 
 	processData(leftEyeRatio, rightEyeRatio) {
@@ -346,7 +346,9 @@ export default class BlinkController extends React.Component {
 			blinkStartTime: currentTime,
 			updateTime: currentTime,
 			ready: false,
-		})
+		});
+
+		debugger;
 	}
 
 	startCV() {
