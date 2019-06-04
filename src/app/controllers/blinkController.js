@@ -37,9 +37,10 @@ function MultipleOptions(props) {
 	if (!props.options) return <div/>;
 
 	return (
-		<div className={`options ${props.final ? "flex" : "" } multiple-options`}>
+		<div className={`options ${props.flexDisplay ? "flex" : "" } multiple-options`}>
 			{
 				props.options.map((option, index) => {
+					var activePath = index == props.path[0];
 					var highlighted = (props.highlightedIndex == index && props.path.length == 0) ? "highlighted" : "";
 					var options = option.options;
 
@@ -49,7 +50,7 @@ function MultipleOptions(props) {
 								{option.displayText}
 							</div>
 
-							<Options options={option.options} path={props.path.slice(1)} final={option.final} highlightedIndex={index == props.path[0] ? props.highlightedIndex : -1}/>
+							<Options options={option.options} path={props.path.slice(1)} flexDisplay={option.flexDisplay} highlightedIndex={activePath ? props.highlightedIndex : -1}/>
 						</div>
 					);
 				})
@@ -108,7 +109,6 @@ export default class BlinkController extends React.Component {
 			Props:
 			{
 				values: {
-					final: boolean,
 					Display Text: string,
 					Options: [this schema],
 
@@ -121,8 +121,6 @@ export default class BlinkController extends React.Component {
 		*/
 
 		super(props);
-
-		this.selectionValues = this.props.values;
 
 		const startTime = Date.now();
 
@@ -151,7 +149,8 @@ export default class BlinkController extends React.Component {
 			blinkStartTime: startTime,
 			updateTime: startTime,
 			ready: false,
-			sensitivity: 0.65
+			sensitivity: 0.65,
+			selectionValues: []
 		}
 
 		this.start = this.start.bind(this);
@@ -170,6 +169,10 @@ export default class BlinkController extends React.Component {
 
 		this.leftEyeDisplay = React.createRef();
 		this.rightEyeDisplay = React.createRef();
+	}
+
+	componentDidMount() {
+		this.updateValues(this.props.values);
 	}
 
 	calibrate() {
@@ -192,7 +195,7 @@ export default class BlinkController extends React.Component {
 	}
 
 	getCurrent() {
-		var current = this.selectionValues; 
+		var current = this.state.selectionValues; 
 
 		this.state.path.forEach((key) => {
 			current = current.options[key];
@@ -335,20 +338,36 @@ export default class BlinkController extends React.Component {
 		}
 	}
 
+	cleanValues(values) {
+		var bottomOfTree = true;
+
+		values.options.forEach((value) => {
+			if (value.options) {
+				bottomOfTree = false;
+				this.cleanValues(value);
+			}
+		});
+
+		values.flexDisplay = bottomOfTree;
+	}
+
 	updateValues(values) {
 		const currentTime = Date.now();
+
+		values = {
+			options: values,
+		};
 		
-		this.selectionValues = values;
+		this.cleanValues(values);
 
 		this.setState({
+			selectionValues: values,
 			path: [],
 			highlightedIndex: 0,
 			blinkStartTime: currentTime,
 			updateTime: currentTime,
 			ready: false,
 		});
-
-		debugger;
 	}
 
 	startCV() {
@@ -394,7 +413,7 @@ export default class BlinkController extends React.Component {
 				<div className="flex eye-status">
 				</div>
 
-				<Options options={this.selectionValues.options} final={this.selectionValues.final} path={this.state.path} highlightedIndex={this.state.highlightedIndex}/>
+				<Options options={this.state.selectionValues.options} flexDisplay={this.state.selectionValues.flexDisplay} path={this.state.path} highlightedIndex={this.state.highlightedIndex}/>
 			</div>
 		);
 	}

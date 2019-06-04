@@ -37,8 +37,6 @@ function gridLetterDisplay(letters, callbackMethod) {
 		});
 
 		results.push({
-			binaryChoice: false,
-			final: true,
 			options: options,
 			displayText: displayText,
 		});
@@ -64,25 +62,17 @@ function textOptions(letters, callbackMethod) {
 			// displayText: `${start[0]} through ${start[start.length - 1]}`,
 			displayText: "",
 			options: blinkingOptions,
-			binaryChoice: false,
-			final: final,
 		}, {
 			// displayText: `${end[0]} through ${end[end.length - 1]}`,
 			displayText: "",
 			options: notBlinkingOptions,
-			binaryChoice: false,
-			final: final,
 		}];/*{
 			blinkingChoice: {
 				displayText: `${start[0]} through ${start[start.length - 1]}`,
 				options: blinkingOptions,
-				binaryChoice: binaryChoice,
-				final: !binaryChoice,
 			}, notBlinkingChoice: {
 				displayText: `${end[0]} through ${end[end.length - 1]}`,
 				options: notBlinkingOptions,
-				binaryChoice: binaryChoice,
-				final: !binaryChoice,
 			}
 		}*/
 	} else {
@@ -102,12 +92,9 @@ function textOptions(letters, callbackMethod) {
 function generateTextValues(callback) {
 	var letterOptions = textOptions(possibleLetters, callback);
 	// var letterOptions = gridLetterDisplay(possibleLetters, callback)
-	// var binaryChoice = options.constructor != Array;
 
 	return {
 		displayText: "Letters",
-		binaryChoice: false,
-		final: false,
 		options: letterOptions
 	}
 }
@@ -115,12 +102,8 @@ function generateTextValues(callback) {
 function getPuncuationValues(callback, deleteCallback) {
 	return {
 		displayText: "Puncuation",
-		binaryChoice: false,
-		final: false,
 		options: [{
 			displayText: "Space, Backspace, Linebreak",
-			binaryChoice: false,
-			final: true,
 			options: [{
 				displayText: "Space",
 				callback: () => {
@@ -139,8 +122,6 @@ function getPuncuationValues(callback, deleteCallback) {
 			}]
 		}, {
 			displayText: "Puncuation",
-			binaryChoice: false,
-			final: true,
 			options: [{
 				displayText: "Period",
 				callback: () => {
@@ -179,15 +160,10 @@ export default class TextEntryController extends React.Component {
 	}
 
 	resetTextEntryValues() {
-		this.blinkController.current.updateValues({
-			displayText: "root",
-			binaryChoice: false,
-			final: false,
-			options: [
-				generateTextValues(this.addText),
-				getPuncuationValues(this.addText, this.deleteText),
-			]
-		});
+		this.blinkController.current.updateValues([
+			generateTextValues(this.addText),
+			getPuncuationValues(this.addText, this.deleteText),
+		]);
 	}
 
 	letterSuggestions(currentWord) {
@@ -196,28 +172,17 @@ export default class TextEntryController extends React.Component {
 
 			var newOptions = textOptions(possibleLetters, this.addText);
 
-			this.blinkController.current.updateValues({
-				displayText: "root",
-				binaryChoice: false,
-				final: false,
-				options: [
-					{
-						displayText: "Letters",
-						binaryChoice: false,
-						final: false,
-						options: newOptions
-					}, 
-					getPuncuationValues(this.addText, this.deleteText),
-					{
-						displayText: "Back",
-						binaryChoice: false,
-						final: true,
-						options: [],
-						callback: this.resetTextEntryValues
-					}
-
-				]
-			});
+			this.blinkController.current.updateValues([
+				{
+					displayText: "Letters",
+					options: newOptions
+				}, getPuncuationValues(this.addText, this.deleteText),
+				{
+					displayText: "Back",
+					options: [],
+					callback: this.resetTextEntryValues
+				}
+			]);
 		} else {
 			this.resetTextEntryValues()
 		}
@@ -232,20 +197,14 @@ export default class TextEntryController extends React.Component {
 	}
 
 	render() {
-		debugger;
 		return (
 			<div className="flex">
 				<TextEntry ref={this.textEntry} />
 
-				<BlinkController decisionTime={700} blinkTime={350} values={{
-					displayText: "root",
-					binaryChoice: false,
-					final: false,
-					options: [
-						generateTextValues(this.addText),
-						getPuncuationValues(this.addText, this.deleteText),
-					]
-				}} ref={this.blinkController}/>
+				<BlinkController decisionTime={700} blinkTime={350} values={[
+					generateTextValues(this.addText),
+					getPuncuationValues(this.addText, this.deleteText),
+				]} ref={this.blinkController}/>
 			</div>
 		);
 	}
