@@ -6,49 +6,31 @@ export default class SnakeController extends React.Component {
 	constructor(props) {
 		super(props);
 
-		this.lateralMoves = {
-			displayText: "root",
-			binaryChoice: false,
-			final: false,
-			options: [{
-				binaryChoice: false,
-				final: true,
-				displayText: "Make Move",
-				options: [{
-					displayText: "Left",
-					callback: () => {
-						this.moveLeft();
-					}
-				}, {
-					displayText: "Right",
-					callback: () => {
-						this.moveRight()
-					}
-				}]
-			}]
-		};
+		this.lateralMoves = [{
+				displayText: "Left",
+				callback: () => {
+					this.moveLeft();
+				}
+			}, {
+				displayText: "Right",
+				callback: () => {
+					this.moveRight()
+				}
+			}
+		];
 
-		this.verticalMoves = {
-			displayText: "root",
-			binaryChoice: false,
-			final: false,
-			options: [{
-				binaryChoice: false,
-				final: true,
-				displayText: "Make Move",
-				options: [{
-					displayText: "Up",
-					callback: () => {
-						this.moveUp();
-					}
-				}, {
-					displayText: "Down",
-					callback: () => {
-						this.moveDown();
-					}
-				}]
-			}]
-		};
+		this.verticalMoves = [{
+				displayText: "Up",
+				callback: () => {
+					this.moveUp();
+				}
+			}, {
+				displayText: "Down",
+				callback: () => {
+					this.moveDown();
+				}
+			}
+		];
 
 		this.snakeGame = React.createRef();
 		this.blinkController = React.createRef();
@@ -93,7 +75,7 @@ export default class SnakeController extends React.Component {
 	render() {
 		return <div className="flex">
 			<Snake ref={this.snakeGame} />
-			<BlinkController decisionTime={450} blinkTime={350} values={this.verticalMoves} ref={this.blinkController}/>
+			<BlinkController decisionTime={700} blinkTime={350} values={this.verticalMoves} ref={this.blinkController}/>
 		</div>;
 	}
 }
