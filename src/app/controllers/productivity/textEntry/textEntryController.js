@@ -32,10 +32,6 @@ function gridLetterDisplay(letters, callbackMethod) {
 			counter++;
 		}
 
-		options.push({
-			displayText: "Back"
-		});
-
 		results.push({
 			options: options,
 			displayText: displayText,
@@ -103,7 +99,6 @@ function getPuncuationValues(callback, deleteCallback) {
 	return {
 		displayText: "Puncuation",
 		options: [{
-			displayText: "Space, Backspace, Linebreak",
 			options: [{
 				displayText: "Space",
 				callback: () => {
@@ -117,11 +112,8 @@ function getPuncuationValues(callback, deleteCallback) {
 				callback: () => {
 					callback("\n");
 				}
-			}, {
-				displayText: "Back",
 			}]
 		}, {
-			displayText: "Puncuation",
 			options: [{
 				displayText: "Period",
 				callback: () => {
@@ -137,8 +129,6 @@ function getPuncuationValues(callback, deleteCallback) {
 				callback: () => {
 					callback("? ");
 				}
-			}, {
-				displayText: "Back"
 			}]
 		}]
 	}
@@ -198,7 +188,7 @@ export default class TextEntryController extends React.Component {
 
 	render() {
 		return (
-			<div className="flex">
+			<div className="text-entry-container flex">
 				<TextEntry ref={this.textEntry} />
 
 				<BlinkController decisionTime={700} blinkTime={350} values={[

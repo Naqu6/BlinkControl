@@ -15,6 +15,7 @@ function createWindow () {
 		webPreferences: {
 			nodeIntegration: true
 		},
+		titleBarStyle: "hidden"
 	});
 
 	win.loadFile('src/app.html');

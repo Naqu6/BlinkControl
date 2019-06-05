@@ -2,8 +2,26 @@
 	font-family: "Open Sans";
 }
 
+body {
+	margin: 0;
+	padding: 0;
+}
+
+.application-header {
+	-webkit-app-region: drag;
+	height: 25px;
+}
+
 .flex {
 	display: flex;
+}
+
+.blink-controller > .options {
+	border-top: 1px solid black;
+}
+
+.blink-controller > .options > .option {
+	padding: 15px;
 }
 
 .options > .option {
@@ -15,12 +33,35 @@
 	background-color: lightblue;
 }
 
-.text-entry-container {
+.blink-controller, .text-entry-controller {
+	flex: 1;
+	margin: 25px;
+}
+
+button {
+    outline: none;
+    -webkit-appearance: none;
+    margin: 5px;
+    padding: 5px;
+    border: 0;
+    background-color: darkblue;
+    color: white;
+    cursor: pointer;
+}
+
+.controller-title {
+	font-size: 24px;
+	padding: 5px 15px;
+}
+
+.blink-controller .controls-container {
+	padding: 5px 15px;
+}
+
+.card {
+	box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+
+.entered-text {
 	margin: 15px;
-	width: 500px;
 }
-
-.blink-controller {
-	width: 500px;
-}
-

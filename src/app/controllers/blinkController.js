@@ -387,27 +387,37 @@ export default class BlinkController extends React.Component {
 
 	render() {
 		return (
-			<div className="blink-controller">
-				<div className="controls">
-					<button onClick={this.startCV}>
-						Enable CV
-					</button>
+			<div className="blink-controller card">
+				<div className="controller-title">
+					Blink Controller
+				</div>
 
-					<button onClick={this.start}>
-						Start
-					</button>
+				<div className="controls-container">
+					<div className="sub-title">
+						Setup
+					</div>
 
-					<button onClick={this.stop}>
-						Stop
-					</button>
+					<div className="controls">
+						<button onClick={this.startCV}>
+							Enable CV
+						</button>
 
-					<button onClick={this.calibrateOpenEye}>
-						Calibrate Open Eye
-					</button>
+						<button onClick={this.start}>
+							Start
+						</button>
 
-					<button onClick={this.calibrateClosedEye}>
-						Calibrate Closed Eye
-					</button>
+						<button onClick={this.stop}>
+							Stop
+						</button>
+
+						<button onClick={this.calibrateOpenEye}>
+							Calibrate Open Eye
+						</button>
+
+						<button onClick={this.calibrateClosedEye}>
+							Calibrate Closed Eye
+						</button>
+					</div>
 				</div>
 
 				<div className="flex eye-status">

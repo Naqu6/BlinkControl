@@ -14,7 +14,7 @@ export default class TextEntry extends React.Component {
 
 	addText(text) {
 		this.setState({
-			text: this.state.text + text
+			text: this.state.text + text.toUpperCase()
 		});
 
 		if (text.match(/[a-z]/i)) {
@@ -38,13 +38,15 @@ export default class TextEntry extends React.Component {
 
 	render() {
 		return (
-			<div className="text-entry-container">
-				<div>
-					Text Entered so far:
+			<div className="text-entry-controller card">
+				<div className="controller-title">
+					Text Entry
 				</div>
 
 				<div>
-					{this.state.text}
+					<div className="entered-text">
+						{this.state.text}
+					</div>
 				</div>
 			</div>
 		);

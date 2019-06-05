@@ -8,7 +8,7 @@ export default class App extends React.Component {
 	}
 
 	render() {
-		return <SnakeController />
+		// return <SnakeController />
 		return <TextEntryController />;
 	}
 }
