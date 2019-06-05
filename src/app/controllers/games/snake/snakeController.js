@@ -33,7 +33,6 @@ export default class SnakeController extends React.Component {
 		];
 
 		this.snakeGame = React.createRef();
-		this.blinkController = React.createRef();
 
 		var toBind = ["moveUp", "moveDown", "moveLeft", "moveRight"];
 
@@ -43,39 +42,30 @@ export default class SnakeController extends React.Component {
 	}
 
 	componentDidMount() {
-		window.onkeydown = (e) => {
-			var newDirection = {37: -1, 38: -2, 39: 1, 40: 2}[e.keyCode]
-
-			if (newDirection) {
-				this.snakeGame.current.setDirection(newDirection);
-			}
-    	};
+		this.props.updateValues(this.verticalMoves);
 	}
 
 	moveUp() {
 		this.snakeGame.current.setDirection(-2);
-		this.blinkController.current.updateValues(this.lateralMoves);
+		this.props.updateValues(this.lateralMoves);
 	}
 
 	moveDown() {
 		this.snakeGame.current.setDirection(2);
-		this.blinkController.current.updateValues(this.lateralMoves);
+		this.props.updateValues(this.lateralMoves);
 	}
 
 	moveLeft() {
 		this.snakeGame.current.setDirection(-1);
-		this.blinkController.current.updateValues(this.verticalMoves);
+		this.props.updateValues(this.verticalMoves);
 	}
 
 	moveRight() {
 		this.snakeGame.current.setDirection(1);
-		this.blinkController.current.updateValues(this.verticalMoves);
+		this.props.updateValues(this.verticalMoves);
 	}
 
 	render() {
-		return <div className="flex">
-			<Snake ref={this.snakeGame} />
-			<BlinkController decisionTime={700} blinkTime={350} values={this.verticalMoves} ref={this.blinkController}/>
-		</div>;
+		return <Snake ref={this.snakeGame} />;
 	}
 }

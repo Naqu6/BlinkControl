@@ -144,13 +144,16 @@ export default class TextEntryController extends React.Component {
 		this.deleteText = this.deleteText.bind(this);
 		
 		this.textEntry = React.createRef();
-		this.blinkController = React.createRef();
 		this.resetTextEntryValues = this.resetTextEntryValues.bind(this);
 		this.letterSuggestions = this.letterSuggestions.bind(this);
 	}
 
+	componentDidMount() {
+		this.resetTextEntryValues()
+	}
+
 	resetTextEntryValues() {
-		this.blinkController.current.updateValues([
+		this.props.updateValues([
 			generateTextValues(this.addText),
 			getPuncuationValues(this.addText, this.deleteText),
 		]);
@@ -162,7 +165,7 @@ export default class TextEntryController extends React.Component {
 
 			var newOptions = textOptions(possibleLetters, this.addText);
 
-			this.blinkController.current.updateValues([
+			this.props.updateValues([
 				{
 					displayText: "Letters",
 					options: newOptions
@@ -188,14 +191,7 @@ export default class TextEntryController extends React.Component {
 
 	render() {
 		return (
-			<div className="text-entry-container flex">
-				<TextEntry ref={this.textEntry} />
-
-				<BlinkController decisionTime={700} blinkTime={350} values={[
-					generateTextValues(this.addText),
-					getPuncuationValues(this.addText, this.deleteText),
-				]} ref={this.blinkController}/>
-			</div>
+			<TextEntry ref={this.textEntry} />
 		);
 	}
 }

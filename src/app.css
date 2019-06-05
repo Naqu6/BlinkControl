@@ -5,15 +5,25 @@
 body {
 	margin: 0;
 	padding: 0;
+	background-color: rgb(20, 105, 219);
+	color: white;
 }
 
 .application-header {
+	position: fixed;
+	width: 100%;
 	-webkit-app-region: drag;
-	height: 25px;
+	padding: 5px;
+	text-align: center;
+	top: 0;
 }
 
 .flex {
 	display: flex;
+}
+
+#root {
+	margin-top: 10px;
 }
 
 .blink-controller > .options {
@@ -59,9 +69,12 @@ button {
 }
 
 .card {
+	background-color: white;
+	color: black;
 	box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
 }
 
 .entered-text {
 	margin: 15px;
 }
+
