@@ -10,6 +10,13 @@ export default class TextEntry extends React.Component {
 
 		this.addText = this.addText.bind(this);
 		this.currentWord = "";
+
+		this.setCurrentWord = this.setCurrentWord.bind(this);
+		this.getText = this.getText.bind(this);
+	}
+
+	setCurrentWord(word) {
+		this.currentWord = word;
 	}
 
 	addText(text) {
@@ -18,9 +25,9 @@ export default class TextEntry extends React.Component {
 		});
 
 		if (text.match(/[a-z]/i)) {
-			this.currentWord += text;
+			this.setCurrentWord(this.currentWord + text);
 		} else {
-			this.currentWord = "";
+			this.setCurrentWord("");
 		}
 
 		return this.currentWord;
@@ -34,6 +41,10 @@ export default class TextEntry extends React.Component {
 		this.currentWord.substring(this.currentWord.length - 1);
 
 		return this.currentWord;
+	}
+
+	getText() {
+		return this.state.text;
 	}
 
 	render() {
