@@ -84,10 +84,10 @@ export default class TextEntryController extends React.Component {
 
 	letterSuggestions(currentWord) {
 		if (currentWord) {
-			var predictorResults = predictor.nextLetters(currentWord.toLowerCase()).sort();
+			var predictorResults = predictor.nextLetters(currentWord.toLowerCase());
 
-			var letterOptions = minTreeOptions(predictorResults[0], this.addText);
-			var wordPredictions = minTreeOptions(predictorResults[1], (text) => {
+			var letterOptions = minTreeOptions(predictorResults.letters.sort(), this.addText);
+			var wordPredictions = minTreeOptions(predictorResults.words, (text) => {
 				this.addText(text.substr(currentWord.length) + " ");
 
 				this.textEntry.current.setCurrentWord("");

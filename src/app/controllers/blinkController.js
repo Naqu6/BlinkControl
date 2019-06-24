@@ -301,8 +301,6 @@ export default class BlinkController extends React.Component {
 	}
 
 	processData(leftEyeRatio, rightEyeRatio) {
-		// console.log(leftEyeRatio, rightEyeRatio)
-
 		var blinking = this.updateEyeData(leftEyeRatio, rightEyeRatio);
 
 		this.setState({

@@ -22,6 +22,7 @@ namespace letterPredictorModule {
 	using v8::Array;
 	using v8::Object;
 	using v8::String;
+	using v8::NewStringType;
 
 	struct WordOrderResult {
 		vector<char> letterResults;
@@ -130,6 +131,7 @@ namespace letterPredictorModule {
 
 	void predictNextLetters(const FunctionCallbackInfo<Value>& args) {
 		Isolate* isolate = args.GetIsolate();
+		Local<Context> context = isolate->GetCurrentContext();
 
 		String::Utf8Value str(isolate, args[0]);
 		string value(*str);
@@ -148,12 +150,12 @@ namespace letterPredictorModule {
 			formattedWords->Set(i, String::NewFromUtf8(isolate, results.wordResults[i].c_str()));
 		}
 
-		Local<Array> formatted = Array::New(isolate);
+		Local<Object> result = Object::New(isolate);
 
-		formatted->Set(0, formattedLetters);
-		formatted->Set(1, formattedWords);
+		result->Set(context, String::NewFromUtf8(isolate, "letters"), formattedLetters);
+		result->Set(context, String::NewFromUtf8(isolate, "words"), formattedWords);
 
-		args.GetReturnValue().Set(formatted);
+		args.GetReturnValue().Set(result);
 	}
 
 	void Initialize(Local<Object> exports) {
