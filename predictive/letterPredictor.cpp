@@ -23,6 +23,11 @@ namespace letterPredictorModule {
 	using v8::Object;
 	using v8::String;
 
+	struct WordOrderResult {
+		vector<char> letterResults;
+		vector<string> wordResults;
+	};
+
 	vector<string> words;
 
 	vector<string> getWordList() {
@@ -75,8 +80,9 @@ namespace letterPredictorModule {
 		return a.score > b.score;
 	}
 
-	vector<char> getWordOrder(string word, vector<string> words) {
+	WordOrderResult getWordOrder(string word, vector<string> words, int numberOfWords) {
 		vector<letterScore> scores(number_of_letters);
+		vector<string> possibleWords(numberOfWords);
 
 		for (int i = 0; i < number_of_letters; i++) {
 			letterScore score = {
@@ -88,10 +94,16 @@ namespace letterPredictorModule {
 		}
 
 		int length = word.length();
+		int wordCounter = 0;
 
 		for (int i = 0; ((unsigned long) i) < words.size(); i++) {
 			if (words[i].length() > ((unsigned long) length) && word == words[i].substr(0, length)) {
 				scores[words[i][length] - letter_start].score += 1;
+
+				if (wordCounter < numberOfWords) {
+					possibleWords[wordCounter] = words[i];
+					wordCounter++;
+				}
 			}
 		}
 
@@ -107,7 +119,13 @@ namespace letterPredictorModule {
 			}
 		}
 
-		return results;
+		WordOrderResult result;
+
+		result.letterResults = results;
+		result.wordResults = possibleWords;
+
+
+		return result;
 	}
 
 	void predictNextLetters(const FunctionCallbackInfo<Value>& args) {
@@ -117,13 +135,23 @@ namespace letterPredictorModule {
 		string value(*str);
 
 
-		vector<char> results = getWordOrder(value, words);
+		WordOrderResult results = getWordOrder(value, words, 10);
+
+		Local<Array> formattedLetters = Array::New(isolate);
+		Local<Array> formattedWords = Array::New(isolate);
+		
+		for (int i = 0; ((unsigned long) i) < results.letterResults.size(); i++ ) {
+			formattedLetters->Set(i, String::NewFromUtf8(isolate, string(1, results.letterResults[i]).c_str()));
+		}
+
+		for (int i = 0; ((unsigned long) i) < results.wordResults.size(); i++ ) {
+			formattedWords->Set(i, String::NewFromUtf8(isolate, results.wordResults[i].c_str()));
+		}
 
 		Local<Array> formatted = Array::New(isolate);
-		
-		for (int i = 0; ((unsigned long) i) < results.size(); i++ ) {
-			formatted->Set(i, String::NewFromUtf8(isolate, string(1, results[i]).c_str()));
-		}
+
+		formatted->Set(0, formattedLetters);
+		formatted->Set(1, formattedWords);
 
 		args.GetReturnValue().Set(formatted);
 	}
