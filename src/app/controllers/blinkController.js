@@ -149,8 +149,9 @@ export default class BlinkController extends React.Component {
 			blinkStartTime: startTime,
 			updateTime: startTime,
 			ready: false,
-			sensitivity: 0.65,
-			selectionValues: []
+			sensitivity: 0.5,
+			selectionValues: [],
+			blinking: false,
 		}
 
 		this.start = this.start.bind(this);
@@ -216,8 +217,8 @@ export default class BlinkController extends React.Component {
 		return this.props.blinkTime;
 	}
 
-	isBlinking(currentRatio) {
-		return currentRatio <= 0.30;
+	isBlinking(currentRatio, calibratedRatio) {
+		return currentRatio <= calibratedRatio;
 	}
 
 	updateEyeData(leftEyeRatio, rightEyeRatio) {
@@ -300,13 +301,19 @@ export default class BlinkController extends React.Component {
 	}
 
 	processData(leftEyeRatio, rightEyeRatio) {
+		// console.log(leftEyeRatio, rightEyeRatio)
+
+		var blinking = this.updateEyeData(leftEyeRatio, rightEyeRatio);
+
+		this.setState({
+			blinking: blinking,
+		});
+
 		if (!this.running) {
 			return;
 		}
 
 		let currentTime = Date.now();
-		
-		var blinking = this.updateEyeData(leftEyeRatio, rightEyeRatio);
 
 		if (!this.state.ready) {
 			if (blinking) {
@@ -315,7 +322,7 @@ export default class BlinkController extends React.Component {
 
 			this.setState({
 				ready: true,
-				updateTime: currentTime
+				updateTime: currentTime,
 			});
 		}
 
@@ -420,7 +427,8 @@ export default class BlinkController extends React.Component {
 					</div>
 				</div>
 
-				<div className="flex eye-status">
+				<div className="eye-status">
+					{this.state.blinking ? "Blinking": "Not Blinking"}
 				</div>
 
 				<Options options={this.state.selectionValues.options} flexDisplay={this.state.selectionValues.flexDisplay} path={this.state.path} highlightedIndex={this.state.highlightedIndex}/>

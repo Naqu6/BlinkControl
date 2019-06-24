@@ -5,7 +5,6 @@
 body {
 	margin: 0;
 	padding: 0;
-	background-color: rgb(20, 105, 219);
 	color: white;
 }
 
@@ -22,12 +21,13 @@ body {
 	display: flex;
 }
 
-#root {
-	margin-top: 10px;
+.application-container > * {
+	padding-top: 10px;
 }
 
 .blink-controller > .options {
-	border-top: 1px solid black;
+	overflow-y: auto;
+	
 }
 
 .blink-controller > .options > .option {
@@ -40,11 +40,20 @@ body {
 }
 
 .option.highlighted {
-	background-color: lightblue;
+	background-color: rgb(87, 1, 255);
 }
 
-.blink-controller, .text-entry-controller {
+div.blink-controller {
 	flex: 1;
+	min-width: 450px;
+	background-color: rgb(20, 105, 219);
+	color: white;
+	height: calc(100vh - 5px);
+}
+
+
+.current-app-container {
+	flex: 2;
 	margin: 25px;
 }
 

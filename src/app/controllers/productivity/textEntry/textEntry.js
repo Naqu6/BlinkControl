@@ -49,15 +49,9 @@ export default class TextEntry extends React.Component {
 
 	render() {
 		return (
-			<div className="text-entry-controller card">
-				<div className="controller-title">
-					Text Entry
-				</div>
-
-				<div>
-					<div className="entered-text">
-						{this.state.text}
-					</div>
+			<div className="text-entry-controller">
+				<div className="entered-text">
+					{this.state.text}
 				</div>
 			</div>
 		);

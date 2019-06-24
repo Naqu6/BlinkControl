@@ -1,6 +1,10 @@
 import React from "react";
+
+import SpeechController from "../app/controllers/productivity/speech/speechController";
 import TextEntryController from "../app/controllers/productivity/textEntry/textEntryController";
+
 import SnakeController from "../app/controllers/games/snake/snakeController";
+
 import BlinkController from "../app/controllers/blinkController";
 
 export default class App extends React.Component {
@@ -9,7 +13,7 @@ export default class App extends React.Component {
 		super(props);
 
 		this.state = {
-			currentController: null,
+			currentController: {},
 		}
 
 		this.blinkController = React.createRef();
@@ -20,7 +24,10 @@ export default class App extends React.Component {
 
 	componentDidMount() {
 		this.setState({
-		 	currentController: <TextEntryController updateValues={this.updateValues}/>
+		 	currentController: {
+		 		controller: <TextEntryController updateValues={this.updateValues} />,
+		 		name: "Text Entry"
+		 	}
 		 });
 
 		this.buildApplicationOptions();
@@ -28,17 +35,33 @@ export default class App extends React.Component {
 
 	buildApplicationOptions() {
 		this.applicationOptions = [{
-			displayText: "Text Entry",
-			callback: () => {
+			displayText: "Speech Controller",
+			callback: (name) => {
 				this.setState({
-					currentController: <TextEntryController updateValues={this.updateValues} />
+					currentController: {
+						controller: <SpeechController updateValues={this.updateValues} />,
+						name: name
+					}
+				});
+			}
+		}, {
+			displayText: "Text Entry",
+			callback: (name) => {
+				this.setState({
+					currentController: {
+						controller: <TextEntryController updateValues={this.updateValues} />,
+						name: name
+					}
 				})
 			}
 		}, {
 			displayText: "Snake",
-			callback: () => {
+			callback: (name) => {
 				this.setState({
-					currentController: <SnakeController updateValues={this.updateValues} />
+					currentController: {
+						controller: <SnakeController updateValues={this.updateValues} />,
+						name: name
+					}
 				})
 			}
 		}];
@@ -57,8 +80,13 @@ export default class App extends React.Component {
 	render() {
 		return (
 			<div className="application-container flex">
-				{this.state.currentController}
-				<BlinkController decisionTime={700} blinkTime={350} values={[]} ref={this.blinkController}/>
+				<BlinkController decisionTime={700} blinkTime={400} values={[]} ref={this.blinkController} />
+				<div className="current-app-container card">
+					<div className="controller-title">
+						{this.state.currentController.name}
+					</div>
+					{this.state.currentController.controller}
+				</div>
 			</div>
 		); 
 	}

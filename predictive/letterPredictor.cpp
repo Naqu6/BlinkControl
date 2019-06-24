@@ -135,7 +135,7 @@ namespace letterPredictorModule {
 		string value(*str);
 
 
-		WordOrderResult results = getWordOrder(value, words, 10);
+		WordOrderResult results = getWordOrder(value, words, 16);
 
 		Local<Array> formattedLetters = Array::New(isolate);
 		Local<Array> formattedWords = Array::New(isolate);
