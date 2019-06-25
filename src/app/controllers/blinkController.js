@@ -451,7 +451,7 @@ export default class BlinkController extends React.Component {
 		const element = document.querySelector(".option.highlighted");
 
 		if (element) {
-			element.scrollIntoView();
+			element.scrollIntoViewIfNeeded();
 		}
   }
 }

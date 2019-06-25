@@ -72,7 +72,8 @@ export default class TextEntryController extends React.Component {
 	}
 
 	componentDidMount() {
-		this.resetTextEntryValues()
+		this.letterSuggestions("")
+		// this.resetTextEntryValues()
 	}
 
 	resetTextEntryValues() {
@@ -83,10 +84,10 @@ export default class TextEntryController extends React.Component {
 	}
 
 	letterSuggestions(currentWord) {
-		if (currentWord) {
+		// if (currentWord) {
 			var predictorResults = predictor.nextLetters(currentWord.toLowerCase());
 
-			var letterOptions = minTreeOptions(predictorResults.letters.sort(), this.addText);
+			var letterOptions = minTreeOptions(predictorResults.letters.sort().map(letter => letter.toUpperCase()), this.addText);
 			var wordPredictions = minTreeOptions(predictorResults.words, (text) => {
 				this.addText(text.substr(currentWord.length) + " ");
 
@@ -108,9 +109,9 @@ export default class TextEntryController extends React.Component {
 					callback: this.resetTextEntryValues
 				}
 			]);
-		} else {
-			this.resetTextEntryValues();
-		}
+		// } else {
+			// this.resetTextEntryValues();
+		// }
 	}
 
 	addText(text) {

@@ -35,11 +35,11 @@ body {
 }
 
 .blink-controller > .options-container > .options > .option {
-	padding: 15px;
+	padding: 5px 15px;
 }
 
 .options > .option {
-	padding: 5px;
+	padding: 2.5px 5px;
 	/*border: 1px solid black;*/
 }
 

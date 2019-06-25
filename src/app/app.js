@@ -80,7 +80,7 @@ export default class App extends React.Component {
 	render() {
 		return (
 			<div className="application-container flex">
-				<BlinkController decisionTime={700} blinkTime={400} values={[]} ref={this.blinkController} />
+				<BlinkController decisionTime={800} blinkTime={350} values={[]} ref={this.blinkController} />
 				<div className="current-app-container card">
 					<div className="controller-title">
 						{this.state.currentController.name}
