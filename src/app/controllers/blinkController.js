@@ -398,7 +398,7 @@ export default class BlinkController extends React.Component {
 	render() {
 		return (
 			<div className="blink-controller card flex">
-				<div class="controller-data">
+				<div className="controller-data">
 					<div className="controller-title">
 						Blink Controller
 					</div>
