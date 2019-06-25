@@ -25,12 +25,16 @@ body {
 	padding-top: 10px;
 }
 
-.blink-controller > .options {
+.blink-controller > .options-container {
 	overflow-y: auto;
-	
+	flex: 1;
 }
 
-.blink-controller > .options > .option {
+.blink-controller .eye-status {
+	padding: 5px;
+}
+
+.blink-controller > .options-container > .options > .option {
 	padding: 15px;
 }
 
@@ -43,12 +47,13 @@ body {
 	background-color: rgb(87, 1, 255);
 }
 
-div.blink-controller {
+div.blink-controller.flex {
 	flex: 1;
 	min-width: 450px;
 	background-color: rgb(20, 105, 219);
 	color: white;
 	height: calc(100vh - 5px);
+	flex-direction: column;
 }
 
 

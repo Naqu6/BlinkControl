@@ -7,6 +7,8 @@ import SnakeController from "../app/controllers/games/snake/snakeController";
 
 import BlinkController from "../app/controllers/blinkController";
 
+import Speech from 'speak-tts';
+
 export default class App extends React.Component {
 
 	constructor(props) {

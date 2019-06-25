@@ -382,55 +382,76 @@ export default class BlinkController extends React.Component {
 	}
 
 	start() {
+		this.setState({
+			path: [],
+			blinkStartTime: null,
+			highlightedIndex: 0,
+		});
+
 		this.running = true;
 	}
 
 	stop() {
-		debugger;
-		cv.stop();
+		this.running = false;
 	}
 
 	render() {
 		return (
-			<div className="blink-controller card">
-				<div className="controller-title">
-					Blink Controller
-				</div>
-
-				<div className="controls-container">
-					<div className="sub-title">
-						Setup
+			<div className="blink-controller card flex">
+				<div class="controller-data">
+					<div className="controller-title">
+						Blink Controller
 					</div>
 
-					<div className="controls">
-						<button onClick={this.startCV}>
-							Enable CV
-						</button>
+					<div className="controls-container">
+						<div className="sub-title">
+							Setup
+						</div>
 
-						<button onClick={this.start}>
-							Start
-						</button>
+						<div className="controls">
+							<button onClick={this.startCV}>
+								Enable CV
+							</button>
 
-						<button onClick={this.stop}>
-							Stop
-						</button>
+							<button onClick={this.start}>
+								Start
+							</button>
 
-						<button onClick={this.calibrateOpenEye}>
-							Calibrate Open Eye
-						</button>
+							<button onClick={this.stop}>
+								Stop
+							</button>
 
-						<button onClick={this.calibrateClosedEye}>
-							Calibrate Closed Eye
-						</button>
+							<button onClick={this.calibrateOpenEye}>
+								Calibrate Open Eye
+							</button>
+
+							<button onClick={this.calibrateClosedEye}>
+								Calibrate Closed Eye
+							</button>
+						</div>
+					</div>
+
+					<div className="eye-status">
+						Status: {this.state.blinking ? "Blinking": "Not Blinking"}
 					</div>
 				</div>
 
-				<div className="eye-status">
-					{this.state.blinking ? "Blinking": "Not Blinking"}
+				<div className="options-container">
+					<Options options={this.state.selectionValues.options} flexDisplay={this.state.selectionValues.flexDisplay} path={this.state.path} highlightedIndex={this.state.highlightedIndex}
+						makeVisible={(ref) => {
+							window.scrollTo(0, ref.current.offsetTop);
+						}}
+					/>
 				</div>
-
-				<Options options={this.state.selectionValues.options} flexDisplay={this.state.selectionValues.flexDisplay} path={this.state.path} highlightedIndex={this.state.highlightedIndex}/>
 			</div>
 		);
 	}
+
+	componentDidUpdate() {
+		const element = document.querySelector(".option.highlighted");
+
+		if (element) {
+			element.scrollIntoView();
+		}
+  }
 }
